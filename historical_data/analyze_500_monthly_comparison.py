@@ -113,9 +113,9 @@ class MonthlyInvestmentComparison:
                 expected_month = days_since_start / 30.44
                 target_month = min(int(expected_month) + 1, months_needed)
                 
-                # Process all missed months to ensure no deposits are skipped
-                while month < target_month:
-                    # Buy shares for monthly strategies
+                # Process one month per iteration to ensure accurate historical pricing
+                if month < target_month:
+                    # Buy shares for monthly strategies at current historical price
                     monthly_lev_shares += monthly_amount / monthly_lev_price
                     monthly_unlev_shares += monthly_amount / monthly_unlev_price
                     monthly_lev_invested += monthly_amount
