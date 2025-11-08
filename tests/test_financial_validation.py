@@ -16,7 +16,6 @@ import unittest
 import sys
 import os
 from datetime import datetime, timedelta
-import csv
 
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -106,7 +105,7 @@ class TestHistoricalCrashScenarios(unittest.TestCase):
         return (data[-1]['close'] - data[0]['close']) / data[0]['close']
 
     def test_2008_financial_crisis_shows_expected_losses(self):
-        """2008 crash should show ~37% loss for S&P 500 unleveraged."""
+        """2008 crash should show significant loss (30-70%) for S&P 500 unleveraged."""
         # S&P 500 peak: Oct 9, 2007 (~1565)
         # S&P 500 trough: Mar 9, 2009 (~676)
         # Loss: ~56.8%
@@ -230,7 +229,6 @@ class TestIRRFinancialAccuracy(unittest.TestCase):
             cash_flows.append(-500)
 
         # Final value with 8% return
-        total_invested = 6000
         # With dollar-cost averaging, final value is slightly different
         # Approximate: $6250 (8% on average investment time)
         dates.append(start_date + timedelta(days=365))
@@ -454,7 +452,6 @@ class TestStatisticalValidation(unittest.TestCase):
         # Check that monthly investment happened roughly 12 times
         # (This is validated by checking total invested)
         result = results[0]
-        expected_invested = 500 * 12  # $500 * 12 months
 
         # Should be close to expected (within 1 month's worth)
         self.assertGreater(result['total_invested'], 500 * 11,
