@@ -124,7 +124,7 @@ class MonthlyInvestmentComparison:
             monthly_unlev_final = monthly_unlev_shares * monthly_unlev_price
             lump_lev_final = total_investment * lump_lev_cumulative
 
-            actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
+            actual_years = (returns[end_idx - 1]['date'] - returns[start_idx]['date']).days / 365.25
 
             # Annualized returns
             monthly_lev_ann = ((monthly_lev_final / monthly_lev_invested) ** (1/actual_years) - 1) * 100 if monthly_lev_invested > 0 else 0
@@ -141,7 +141,7 @@ class MonthlyInvestmentComparison:
 
             results.append({
                 'start_date': returns[start_idx]['date'],
-                'end_date': returns[end_idx]['date'],
+                'end_date': returns[end_idx - 1]['date'],
                 'years': actual_years,
                 'monthly_lev_final': monthly_lev_final,
                 'monthly_unlev_final': monthly_unlev_final,
