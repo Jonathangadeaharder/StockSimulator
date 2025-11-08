@@ -1,0 +1,268 @@
+================================================
+Test Execution Log
+Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
+Commit: 544146ee041143a90a245f58ec20a9c9062a4e43
+Timestamp: 2025-11-08 20:22:13 UTC
+================================================
+
+test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
+IRR should correctly calculate negative returns. ... ok
+test_irr_handles_zero_return (tests.test_analysis_suite.TestIRRCalculation)
+IRR should handle break-even scenarios. ... ok
+test_irr_rejects_empty_cash_flows (tests.test_analysis_suite.TestIRRCalculation)
+IRR should return None for empty inputs. ... ok
+test_irr_rejects_extreme_values (tests.test_analysis_suite.TestIRRCalculation)
+IRR should reject unrealistic rates beyond sanity bounds. ... ok
+test_irr_rejects_mismatched_lengths (tests.test_analysis_suite.TestIRRCalculation)
+IRR should return None if cash flows and dates don't match. ... ok
+test_irr_rejects_single_cash_flow (tests.test_analysis_suite.TestIRRCalculation)
+IRR needs at least 2 cash flows. ... ok
+test_irr_with_monthly_contributions (tests.test_analysis_suite.TestIRRCalculation)
+IRR should handle monthly contribution patterns. ... ok
+test_simple_irr_calculation (tests.test_analysis_suite.TestIRRCalculation)
+IRR should correctly calculate for simple cash flows. ... ok
+test_annualized_return_calculation (tests.test_analysis_suite.TestReturnCalculations)
+Annualized returns should compound correctly. ... ok
+test_cumulative_return_calculation (tests.test_analysis_suite.TestReturnCalculations)
+Cumulative returns should compound daily returns. ... ok
+test_daily_returns_calculation (tests.test_analysis_suite.TestReturnCalculations)
+Daily returns should be calculated correctly. ... ok
+test_leveraged_return_calculation (tests.test_analysis_suite.TestReturnCalculations)
+Leveraged returns should apply 2x multiplier and TER. ... ok
+test_daily_rebalancing (tests.test_analysis_suite.TestLeveragedETFSimulation)
+Leverage should rebalance daily to 2x. ... ok
+test_ter_reduces_returns (tests.test_analysis_suite.TestLeveragedETFSimulation)
+TER should reduce leveraged returns. ... ok
+test_volatility_decay_effect (tests.test_analysis_suite.TestLeveragedETFSimulation)
+Leveraged ETF should experience volatility decay. ... ok
+test_calculate_percentiles_basic (tests.test_analysis_suite.TestPercentileCalculations)
+Percentiles should correctly identify distribution points. ... ok
+test_percentiles_sorted_correctly (tests.test_analysis_suite.TestPercentileCalculations)
+Percentiles should sort unsorted data. ... ok
+test_percentiles_with_small_dataset (tests.test_analysis_suite.TestPercentileCalculations)
+Percentiles should handle small datasets. ... ok
+test_csv_reading_filters_invalid_prices (tests.test_analysis_suite.TestDataValidation)
+CSV reader should filter out zero/negative/missing prices. ... ok
+test_date_filtering_by_year (tests.test_analysis_suite.TestDataValidation)
+Data reader should filter dates before start year. ... ok
+test_dollar_cost_averaging_math (tests.test_analysis_suite.TestMonthlyInvestmentSimulation)
+DCA should buy more shares when price is low. ... ok
+test_monthly_investment_timing (tests.test_analysis_suite.TestMonthlyInvestmentSimulation)
+Monthly investments should occur approximately every 30 days. ... ok
+test_division_by_zero_protection (tests.test_analysis_suite.TestEdgeCases)
+Calculations should handle zero denominators gracefully. ... ok
+test_empty_data_handling (tests.test_analysis_suite.TestEdgeCases)
+Functions should handle empty datasets gracefully. ... ok
+test_single_day_return_edge_case (tests.test_analysis_suite.TestEdgeCases)
+Should handle minimum data requirements. ... ok
+test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
+Test complete investment simulation cycle. ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.076s
+
+OK
+test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
+Complete analysis pipeline should run on real data. ... 
+╔======================================================================================================================╗
+║                                        PAIRWISE COMPARISON ANALYSIS                                                  ║
+║                         Head-to-Head: Leveraged vs Non-Leveraged Strategies                                          ║
+╚======================================================================================================================╝
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: S&P 500
+========================================================================================================================
+
+Error analyzing S&P 500: [Errno 2] No such file or directory: 'sp500_stooq_daily.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: DJIA
+========================================================================================================================
+
+Error analyzing DJIA: [Errno 2] No such file or directory: 'djia_stooq_daily.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: NASDAQ
+========================================================================================================================
+
+Error analyzing NASDAQ: [Errno 2] No such file or directory: 'nasdaq_fred.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: Nikkei 225
+========================================================================================================================
+
+Error analyzing Nikkei 225: [Errno 2] No such file or directory: 'nikkei225_fred.csv'
+
+
+========================================================================================================================
+SUMMARY: WIN RATES BY COMPARISON
+========================================================================================================================
+
+COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged
+------------------------------------------------------------------------------------------------------------------------
+
+5-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+10-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+15-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+========================================================================================================================
+
+COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged
+------------------------------------------------------------------------------------------------------------------------
+
+5-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+10-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+15-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+========================================================================================================================
+
+========================================================================================================================
+╔==============================================================================╗
+║                    STOCKSIMULATOR COMPREHENSIVE TEST SUITE                   ║
+╚==============================================================================╝
+
+================================================================================
+PART 1: UNIT TESTS (Code Structure & Basic Functionality)
+================================================================================
+
+
+
+================================================================================
+PART 2: FINANCIAL VALIDATION TESTS (Real Data & Correctness)
+================================================================================
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: S&P 500
+========================================================================================================================
+
+========================================================================================================================
+5-YEAR PERIOD (Total Investment: $30,000)
+========================================================================================================================
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+COMPARISON 1: Lump-Sum $30,000 (2x Leveraged) vs Monthly $500 (Non-Leveraged)
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Win Statistics (250 periods analyzed):
+  Lump-Sum 2x Leveraged wins:    174 ( 69.6%)
+  Monthly Non-Leveraged wins:      76 ( 30.4%)
+
+Return Percentiles (Annualized %):
+Strategy                       10th %       25th %       50th %       75th %       90th %      
+------------------------------------------------------------------------------------------------------------------------
+Lump-Sum 2x Leveraged               -6.91%      -1.55%      19.87%      27.14%      31.52%
+Monthly Non-Leveraged                1.02%       7.30%      11.92%      15.16%      17.45%
+Gap (Lump 2x - Non-Lev)            -11.93%      -4.03%       8.62%      12.36%      15.42%
+
+Final Value Percentiles (from $30,000 invested):
+Strategy                       10th %          25th %          50th %          75th %          90th %         
+------------------------------------------------------------------------------------------------------------------------
+Lump-Sum 2x Leveraged          $       20,973 $       27,741 $       74,263 $       99,725 $      118,119
+Monthly Non-Leveraged          $       30,259 $       35,359 $       39,586 $       42,822 $       45,250
+
+Worst Period for Lump-Sum 2x (biggest underperformance):
+  Period: 2007-10 to 2012-10
+  Lump-Sum 2x:  -6.91% ann. ($      20,973)
+  Monthly Non-Lev:  10.68% ann. ($      38,414)
+  Gap: -17.59% per year
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+COMPARISON 2: Monthly $500 (2x Leveraged) vs Monthly $500 (Non-Leveraged)
+ok
+test_sp500_data_loads_successfully (tests.test_financial_validation.TestRealDataIntegration)
+Real S&P 500 data should load without errors. ... ok
+test_sp500_returns_calculation_produces_valid_results (tests.test_financial_validation.TestRealDataIntegration)
+S&P 500 returns should be within reasonable bounds. ... ok
+test_2008_financial_crisis_shows_expected_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
+2008 crash should show ~37% loss for S&P 500 unleveraged. ... ok
+test_2x_leveraged_amplifies_2008_crash_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
+2x leveraged ETF should lose more than 2x during sustained crash. ... ok
+test_black_monday_1987_single_day_crash (tests.test_financial_validation.TestHistoricalCrashScenarios)
+Black Monday (Oct 19, 1987) should show ~20% single-day loss. ... ok
+test_dot_com_bubble_burst_2000_2002 (tests.test_financial_validation.TestHistoricalCrashScenarios)
+Dot-com crash (2000-2002) should show significant losses. ... ok
+test_irr_handles_irregular_timing (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should work with non-standard investment intervals. ... ok
+test_irr_matches_simple_annual_return (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should match simple return for single-period investment. ... ok
+test_irr_negative_return_accuracy (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should correctly calculate negative returns. ... ok
+test_irr_with_real_monthly_investment_pattern (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR for monthly investments should match expected range. ... ok
+test_2x_leverage_doubles_returns_in_simple_scenario (tests.test_financial_validation.TestLeveragedETFMechanics)
+2x leverage should approximately double returns in low-volatility uptrend. ... ok
+test_ter_annual_impact_is_approximately_correct (tests.test_financial_validation.TestLeveragedETFMechanics)
+TER of 0.6% should cost roughly 0.6% annually in flat market. ... ok
+test_volatility_decay_occurs_in_oscillating_market (tests.test_financial_validation.TestLeveragedETFMechanics)
+Leveraged ETF should underperform in high-volatility flat market. ... ok
+test_leveraged_returns_have_higher_volatility (tests.test_financial_validation.TestStatisticalValidation)
+2x leveraged returns should have roughly 2x higher standard deviation. ... ok
+test_monthly_investment_makes_approximately_12_investments_per_year (tests.test_financial_validation.TestStatisticalValidation)
+Monthly investment logic should invest roughly 12 times per year. ... ok
+test_percentile_calculations_are_monotonic (tests.test_financial_validation.TestStatisticalValidation)
+Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 2.122s
+
+OK
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Win Statistics (250 periods analyzed):
+  Monthly 2x Leveraged wins:     215 ( 86.0%)
+  Monthly Non-Leveraged wins:     35 ( 14.0%)
+
+Return Percentiles (Annualized %):
+Strategy                       10th %       25th %       50th %       75th %       90th %      
+------------------------------------------------------------------------------------------------------------------------
+Monthly 2x Leveraged                -2.94%      11.17%      22.10%      27.93%      33.27%
+Monthly Non-Leveraged                1.02%       7.30%      11.92%      15.16%      17.45%
+Gap (Monthly 2x - Non-Lev)          -2.67%       4.14%      10.05%      12.96%      15.58%
+
+Final Value Percentiles (from $30,000 invested):
+Strategy                       10th %          25th %          50th %          75th %          90th %         
+------------------------------------------------------------------------------------------------------------------------
+Monthly 2x Leveraged           $       27,405 $       38,868 $       50,562 $       57,991 $       65,619
+Monthly Non-Leveraged          $       30,259 $       35,359 $       39,586 $       42,822 $       45,250
+
+Worst Period for Monthly 2x (biggest underperformance):
+  Period: 2004-03 to 2009-03
+  Monthly 2x: -20.96% ann. ($       9,095)
+  Monthly Non-Lev:  -9.32% ann. ($      18,080)
+  Gap: -11.64% per year
+
+
+
+
+================================================================================
+OVERALL SUMMARY
+================================================================================
+Unit Tests:        26 tests (26 pass, 0 fail, 0 error)
+Validation Tests:  17 tests (17 pass, 0 fail, 0 error)
+--------------------------------------------------------------------------------
+TOTAL:             43 tests (43 pass, 0 fail, 0 error)
+Success Rate:     100.0%
+================================================================================
+
+✅ ALL TESTS PASSED
+
+================================================
+✅ ALL TESTS PASSED
+================================================
