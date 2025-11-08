@@ -10,6 +10,56 @@ Shows head-to-head performance without the three-way complexity
 import csv
 from datetime import datetime, timedelta
 
+def calculate_irr(cash_flows, dates, guess=0.1, max_iter=1000, tol=1e-6):
+    """
+    Calculate Internal Rate of Return (IRR) for a series of cash flows.
+    
+    Args:
+        cash_flows: List of cash flows (negative for outflows, positive for inflows)
+        dates: List of dates corresponding to each cash flow
+        guess: Initial guess for IRR
+        max_iter: Maximum iterations for Newton-Raphson
+        tol: Tolerance for convergence
+    
+    Returns:
+        Annualized IRR as a percentage, or None if no convergence
+    """
+    if len(cash_flows) != len(dates) or len(cash_flows) < 2:
+        return None
+    
+    # Calculate days from first date
+    start_date = dates[0]
+    days = [(d - start_date).days for d in dates]
+    
+    # Newton-Raphson method to solve for IRR
+    rate = guess
+    for _ in range(max_iter):
+        # Calculate NPV and derivative
+        npv = 0.0
+        npv_derivative = 0.0
+        
+        for cf, day in zip(cash_flows, days):
+            time_factor = day / 365.25
+            discount = (1 + rate) ** time_factor
+            npv += cf / discount
+            npv_derivative -= cf * time_factor / (discount * (1 + rate))
+        
+        # Check convergence
+        if abs(npv) < tol:
+            return rate * 100  # Return as percentage
+        
+        # Newton-Raphson update
+        if abs(npv_derivative) < 1e-10:
+            return None  # Avoid division by zero
+        
+        rate = rate - npv / npv_derivative
+        
+        # Sanity check: rate shouldn't be too extreme
+        if rate < -0.99 or rate > 10:
+            return None
+    
+    return None  # No convergence
+
 class PairwiseComparison:
     def __init__(self, name, filename, date_col='Date', price_col='Close', start_year=1950):
         self.name = name
@@ -90,6 +140,8 @@ class PairwiseComparison:
             monthly_unlev_shares = 0.0
             monthly_unlev_price = 100.0
             monthly_unlev_invested = 0
+            monthly_unlev_cash_flows = []
+            monthly_unlev_dates = []
 
             month = 0
 
@@ -109,16 +161,27 @@ class PairwiseComparison:
                     month = int(expected_month)
                     monthly_unlev_shares += monthly_amount / monthly_unlev_price
                     monthly_unlev_invested += monthly_amount
+                    # Track cash flow (negative for outflow)
+                    monthly_unlev_cash_flows.append(-monthly_amount)
+                    monthly_unlev_dates.append(ret['date'])
 
             # Final values
             lump_lev_final = total_investment * lump_lev_cumulative
             monthly_unlev_final = monthly_unlev_shares * monthly_unlev_price
 
+            # Add terminal value as inflow for IRR calculation
+            monthly_unlev_cash_flows.append(monthly_unlev_final)
+            monthly_unlev_dates.append(returns[end_idx]['date'])
+
             actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
 
             # Annualized returns
             lump_lev_ann = ((lump_lev_cumulative) ** (1/actual_years) - 1) * 100
-            monthly_unlev_ann = ((monthly_unlev_final / monthly_unlev_invested) ** (1/actual_years) - 1) * 100 if monthly_unlev_invested > 0 else 0
+            # Use IRR for monthly strategy
+            monthly_unlev_ann = calculate_irr(monthly_unlev_cash_flows, monthly_unlev_dates)
+            if monthly_unlev_ann is None:
+                # Fallback to simple calculation if IRR fails
+                monthly_unlev_ann = ((monthly_unlev_final / monthly_unlev_invested) ** (1/actual_years) - 1) * 100 if monthly_unlev_invested > 0 else 0
 
             results.append({
                 'start_date': returns[start_idx]['date'],
@@ -160,11 +223,15 @@ class PairwiseComparison:
             monthly_lev_shares = 0.0
             monthly_lev_price = 100.0
             monthly_lev_invested = 0
+            monthly_lev_cash_flows = []
+            monthly_lev_dates = []
 
             # Strategy 2: $500/month into non-leveraged
             monthly_unlev_shares = 0.0
             monthly_unlev_price = 100.0
             monthly_unlev_invested = 0
+            monthly_unlev_cash_flows = []
+            monthly_unlev_dates = []
 
             month = 0
 
@@ -184,16 +251,34 @@ class PairwiseComparison:
                     monthly_unlev_shares += monthly_amount / monthly_unlev_price
                     monthly_lev_invested += monthly_amount
                     monthly_unlev_invested += monthly_amount
+                    # Track cash flows (negative for outflows)
+                    monthly_lev_cash_flows.append(-monthly_amount)
+                    monthly_lev_dates.append(ret['date'])
+                    monthly_unlev_cash_flows.append(-monthly_amount)
+                    monthly_unlev_dates.append(ret['date'])
 
             # Final values
             monthly_lev_final = monthly_lev_shares * monthly_lev_price
             monthly_unlev_final = monthly_unlev_shares * monthly_unlev_price
 
+            # Add terminal values as inflows for IRR calculation
+            monthly_lev_cash_flows.append(monthly_lev_final)
+            monthly_lev_dates.append(returns[end_idx]['date'])
+            monthly_unlev_cash_flows.append(monthly_unlev_final)
+            monthly_unlev_dates.append(returns[end_idx]['date'])
+
             actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
 
-            # Annualized returns
-            monthly_lev_ann = ((monthly_lev_final / monthly_lev_invested) ** (1/actual_years) - 1) * 100 if monthly_lev_invested > 0 else 0
-            monthly_unlev_ann = ((monthly_unlev_final / monthly_unlev_invested) ** (1/actual_years) - 1) * 100 if monthly_unlev_invested > 0 else 0
+            # Annualized returns using IRR
+            monthly_lev_ann = calculate_irr(monthly_lev_cash_flows, monthly_lev_dates)
+            if monthly_lev_ann is None:
+                # Fallback to simple calculation if IRR fails
+                monthly_lev_ann = ((monthly_lev_final / monthly_lev_invested) ** (1/actual_years) - 1) * 100 if monthly_lev_invested > 0 else 0
+            
+            monthly_unlev_ann = calculate_irr(monthly_unlev_cash_flows, monthly_unlev_dates)
+            if monthly_unlev_ann is None:
+                # Fallback to simple calculation if IRR fails
+                monthly_unlev_ann = ((monthly_unlev_final / monthly_unlev_invested) ** (1/actual_years) - 1) * 100 if monthly_unlev_invested > 0 else 0
 
             results.append({
                 'start_date': returns[start_idx]['date'],
