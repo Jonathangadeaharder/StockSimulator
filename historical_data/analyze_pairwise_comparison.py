@@ -23,6 +23,12 @@ def calculate_irr(cash_flows, dates, guess=0.1, max_iter=1000, tol=1e-6):
     
     Returns:
         Annualized IRR as a percentage, or None if no convergence
+    
+    Note:
+        The function applies a sanity check to reject unrealistic IRR values:
+        - Lower bound: -99% (rate < -0.99) - Total loss is the practical minimum
+        - Upper bound: 1000% (rate > 10) - Returns exceeding 10x annually are 
+          unrealistic for stock market investments and likely indicate calculation errors
     """
     if not cash_flows or not dates:
         return None
