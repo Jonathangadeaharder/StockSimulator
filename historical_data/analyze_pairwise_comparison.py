@@ -24,6 +24,8 @@ def calculate_irr(cash_flows, dates, guess=0.1, max_iter=1000, tol=1e-6):
     Returns:
         Annualized IRR as a percentage, or None if no convergence
     """
+    if not cash_flows or not dates:
+        return None
     if len(cash_flows) != len(dates) or len(cash_flows) < 2:
         return None
     
