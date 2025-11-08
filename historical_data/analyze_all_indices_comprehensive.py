@@ -150,14 +150,15 @@ class IndexAnalyzer:
             lev_final_value = initial_amount * lev_cumulative
             unlev_final_value = initial_amount * unlev_cumulative
 
-            actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
+            period_end = returns[end_idx - 1]
+            actual_years = (period_end['date'] - returns[start_idx]['date']).days / 365.25
 
             lev_annualized = ((lev_cumulative) ** (1/actual_years) - 1) * 100
             unlev_annualized = ((unlev_cumulative) ** (1/actual_years) - 1) * 100
 
             results.append({
                 'start_date': returns[start_idx]['date'],
-                'end_date': returns[end_idx]['date'],
+                'end_date': period_end['date'],
                 'years': actual_years,
                 'total_invested': initial_amount,
                 'lev_final_value': lev_final_value,
