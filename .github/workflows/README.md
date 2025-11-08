@@ -14,7 +14,7 @@ Automatically runs the test suite and commits results back to the branch.
 
 ### Workflow
 
-```
+```text
 Developer pushes code
     ↓
 GitHub Action triggers
@@ -41,7 +41,7 @@ The `tests.log` file contains:
 
 ### Example tests.log
 
-```
+```text
 ================================================
 Test Execution Log
 Branch: feature/new-analysis

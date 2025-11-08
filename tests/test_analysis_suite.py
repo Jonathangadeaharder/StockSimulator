@@ -20,7 +20,6 @@ import unittest
 import sys
 import os
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, mock_open
 import csv
 import io
 
@@ -28,7 +27,7 @@ import io
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # Import from historical_data directory
-from historical_data.analyze_pairwise_comparison import calculate_irr, PairwiseComparison
+from historical_data.analyze_pairwise_comparison import calculate_irr
 
 
 class TestIRRCalculation(unittest.TestCase):

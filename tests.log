@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
-Branch: 13/merge
-Commit: 16d966250d5e09bf440b7424cea23c5136f965ef
-Timestamp: 2025-11-08 21:01:33 UTC
+Branch: copilot/sub-pr-13-again
+Commit: 787f2d53f0b2d1ffba094ee5e0ccf21a0ee4a582
+Timestamp: 2025-11-08 21:36:58 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.016s
+Ran 26 tests in 0.030s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -191,7 +191,7 @@ Real S&P 500 data should load without errors. ... ok
 test_sp500_returns_calculation_produces_valid_results (tests.test_financial_validation.TestRealDataIntegration)
 S&P 500 returns should be within reasonable bounds. ... ok
 test_2008_financial_crisis_shows_expected_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
-2008 crash should show ~37% loss for S&P 500 unleveraged. ... ok
+2008 crash should show significant loss (30-70%) for S&P 500 unleveraged. ... ok
 test_2x_leveraged_amplifies_2008_crash_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
 2x leveraged ETF should lose more than 2x during sustained crash. ... ok
 test_black_monday_1987_single_day_crash (tests.test_financial_validation.TestHistoricalCrashScenarios)
@@ -220,7 +220,7 @@ test_percentile_calculations_are_monotonic (tests.test_financial_validation.Test
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.117s
+Ran 17 tests in 2.132s
 
 OK
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

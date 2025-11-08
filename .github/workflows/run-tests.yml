@@ -82,12 +82,19 @@ jobs:
           else
             if [ "${{ github.event_name }}" == "push" ]; then
               # For push events, amend the last commit
-              echo "Amending last commit with test results..."
-              git commit --amend --no-edit
-
-              # Force push the amended commit
-              git push --force-with-lease origin ${{ github.ref_name }}
-              echo "✅ Test results committed and pushed (amended)"
+              # Only force-push if not on protected branches
+              if [ "${{ github.ref_name }}" != "main" ] && [ "${{ github.ref_name }}" != "master" ]; then
+                echo "Amending last commit with test results..."
+                git commit --amend --no-edit
+                git push --force-with-lease origin ${{ github.ref_name }}
+                echo "✅ Test results committed and pushed (amended)"
+              else
+                echo "⚠️ Skipping force-push to protected branch (${{ github.ref_name }})"
+                echo "Creating new commit instead..."
+                git commit -m "Add test execution log [skip ci]"
+                git push origin ${{ github.ref_name }}
+                echo "✅ Test results committed and pushed (new commit)"
+              fi
             else
               # For pull requests, create a new commit
               echo "Creating new commit with test results..."
