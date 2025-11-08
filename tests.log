@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: copilot/sub-pr-13-again
-Commit: 787f2d53f0b2d1ffba094ee5e0ccf21a0ee4a582
-Timestamp: 2025-11-08 21:36:58 UTC
+Commit: d0a59c48d89ce65bc191b74ec0189bc080aeff98
+Timestamp: 2025-11-08 22:07:04 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.030s
+Ran 26 tests in 0.015s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -220,7 +220,7 @@ test_percentile_calculations_are_monotonic (tests.test_financial_validation.Test
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.132s
+Ran 17 tests in 2.112s
 
 OK
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
