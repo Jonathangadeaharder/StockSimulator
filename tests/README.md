@@ -227,7 +227,7 @@ Ensures results follow expected statistical distributions and aren't artifacts o
 ## ✅ Test Results
 
 ### Current Status
-```
+```text
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    STOCKSIMULATOR TEST SUITE RESULTS                         ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
