@@ -93,17 +93,24 @@ class IndexAnalyzer:
             for i in range(start_idx, end_idx):
                 ret = returns[i]
 
-                lev_price *= (1 + ret['lev_return'])
-                unlev_price *= (1 + ret['unlev_return'])
-
+                # First check if we've crossed any month boundaries before applying this day's return
                 days_since_start = (ret['date'] - returns[start_idx]['date']).days
                 expected_month = days_since_start / 30.44
-
-                if int(expected_month) > month and month < months_needed:
-                    month = int(expected_month)
+                target_month = int(expected_month)
+                
+                # Apply monthly investments for any months we've entered since last iteration
+                # Use the price from the START of this day (before applying today's return)
+                # Note: If data is sparse and multiple months are crossed at once, all investments
+                # use the same price. This is a reasonable approximation when intermediate data is unavailable.
+                while month < target_month and month < months_needed:
+                    month += 1
                     lev_shares += monthly_amount / lev_price
                     unlev_shares += monthly_amount / unlev_price
                     total_invested += monthly_amount
+
+                # Now update prices with this day's return (after monthly investments)
+                lev_price *= (1 + ret['lev_return'])
+                unlev_price *= (1 + ret['unlev_return'])
 
             lev_final_value = lev_shares * lev_price
             unlev_final_value = unlev_shares * unlev_price
