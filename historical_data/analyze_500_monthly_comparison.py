@@ -111,20 +111,23 @@ class MonthlyInvestmentComparison:
                 # Monthly investments
                 days_since_start = (ret['date'] - returns[start_idx]['date']).days
                 expected_month = days_since_start / 30.44
-                if int(expected_month) > month and month < months_needed:
-                    month = int(expected_month)
-                    # Buy shares for monthly strategies
+                target_month = min(int(expected_month) + 1, months_needed)
+                
+                # Process one month per iteration to ensure accurate historical pricing
+                if month < target_month:
+                    # Buy shares for monthly strategies at current historical price
                     monthly_lev_shares += monthly_amount / monthly_lev_price
                     monthly_unlev_shares += monthly_amount / monthly_unlev_price
                     monthly_lev_invested += monthly_amount
                     monthly_unlev_invested += monthly_amount
+                    month += 1
 
             # Final values
             monthly_lev_final = monthly_lev_shares * monthly_lev_price
             monthly_unlev_final = monthly_unlev_shares * monthly_unlev_price
             lump_lev_final = total_investment * lump_lev_cumulative
 
-            actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
+            actual_years = (returns[end_idx - 1]['date'] - returns[start_idx]['date']).days / 365.25
 
             # Annualized returns
             monthly_lev_ann = ((monthly_lev_final / monthly_lev_invested) ** (1/actual_years) - 1) * 100 if monthly_lev_invested > 0 else 0
@@ -141,7 +144,7 @@ class MonthlyInvestmentComparison:
 
             results.append({
                 'start_date': returns[start_idx]['date'],
-                'end_date': returns[end_idx]['date'],
+                'end_date': returns[end_idx - 1]['date'],
                 'years': actual_years,
                 'monthly_lev_final': monthly_lev_final,
                 'monthly_unlev_final': monthly_unlev_final,
