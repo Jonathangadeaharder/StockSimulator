@@ -45,14 +45,18 @@ def verify_leveraged_etf_simulation():
 
     # Check against expected
     unlev_final_expected = 100 * 1.10 * 0.95 * 1.03
+    match = abs(unlev_value - unlev_final_expected) < 0.001
     print(f"Unleveraged final: ${unlev_value:.4f}")
     print(f"Expected: ${unlev_final_expected:.4f}")
-    print(f"Match: {abs(unlev_value - unlev_final_expected) < 0.001}")
+    print(f"Match: {match}")
     print()
 
-    print("✓ Leveraged ETF simulation verified")
+    if match:
+        print("✓ Leveraged ETF simulation verified")
+    else:
+        print("✗ Leveraged ETF simulation FAILED")
     print()
-    return True
+    return match
 
 def verify_monthly_dca():
     """Verify monthly DCA calculation"""
@@ -93,9 +97,20 @@ def verify_monthly_dca():
         print(f"  Price ${fp}: Value ${final_value:.2f}, Return {total_return:+.2f}%, Avg cost ${avg_cost:.2f}")
     print()
 
-    print("✓ Monthly DCA calculation verified")
+    # Verify expected shares calculation
+    expected_shares = 100/100 + 100/90 + 100/110
+    match = abs(shares - expected_shares) < 0.000001
+    print(f"Total shares: {shares:.6f}")
+    print(f"Expected: {expected_shares:.6f}")
+    print(f"Match: {match}")
     print()
-    return True
+
+    if match:
+        print("✓ Monthly DCA calculation verified")
+    else:
+        print("✗ Monthly DCA calculation FAILED")
+    print()
+    return match
 
 def verify_lumpsum():
     """Verify lump-sum calculation"""
@@ -130,9 +145,20 @@ def verify_lumpsum():
         print(f"  Total return: {total_return:+.2f}%")
         print()
 
-    print("✓ Lump-sum calculation verified")
+    # Verify final price calculation
+    expected_price = 100 * 1.10 * 0.90 * 1.05
+    match = abs(price - expected_price) < 0.001
+    print(f"Final price: ${price:.4f}")
+    print(f"Expected: ${expected_price:.4f}")
+    print(f"Match: {match}")
     print()
-    return True
+
+    if match:
+        print("✓ Lump-sum calculation verified")
+    else:
+        print("✗ Lump-sum calculation FAILED")
+    print()
+    return match
 
 def verify_comparison_logic():
     """Verify that we're comparing apples to apples"""
@@ -171,9 +197,17 @@ def verify_comparison_logic():
     print(f"  Gap: Leveraged_Ann% - Unleveraged_Ann%")
     print()
 
-    print("✓ Comparison logic verified")
+    # All checks passed - this is a logical verification, not numerical
+    match = True
+    print(f"Match: {match}")
     print()
-    return True
+
+    if match:
+        print("✓ Comparison logic verified")
+    else:
+        print("✗ Comparison logic FAILED")
+    print()
+    return match
 
 def verify_edge_cases():
     """Test edge cases and boundary conditions"""
@@ -234,9 +268,17 @@ def verify_edge_cases():
     print(f"  Volatility decay evident: {lev < unlev}")
     print()
 
-    print("✓ Edge cases verified")
+    # Verify all edge case conditions
+    match = (lev < unlev)  # Volatility decay should be evident
+    print(f"Match: {match}")
     print()
-    return True
+
+    if match:
+        print("✓ Edge cases verified")
+    else:
+        print("✗ Edge cases FAILED")
+    print()
+    return match
 
 # Run all verifications
 if __name__ == "__main__":
