@@ -202,8 +202,6 @@ def verify_comparison_logic():
 
     if match:
         print("✓ Comparison logic verified")
-    else:
-        print("✗ Comparison logic FAILED")
     print()
     return match
 
