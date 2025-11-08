@@ -6,7 +6,6 @@ Compare Monthly Investing ($500/month) vs Lump-Sum Investment
 
 import csv
 from datetime import datetime, timedelta
-import math
 
 def read_daily_data(filename='sp500_stooq_daily.csv', start_year=1950):
     """Read daily S&P 500 data"""
