@@ -100,6 +100,8 @@ class IndexAnalyzer:
                 
                 # Apply monthly investments for any months we've entered since last iteration
                 # Use the price from the START of this day (before applying today's return)
+                # Note: If data is sparse and multiple months are crossed at once, all investments
+                # use the same price. This is a reasonable approximation when intermediate data is unavailable.
                 while month < target_month and month < months_needed:
                     month += 1
                     lev_shares += monthly_amount / lev_price
