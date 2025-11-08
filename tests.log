@@ -1,0 +1,65 @@
+================================================
+Test Execution Log
+Branch: (initial)
+Commit: (initial)
+Timestamp: 2025-01-08 (initial setup)
+================================================
+
+This file will be automatically updated by the GitHub Action
+whenever you push to the repository.
+
+To see test results after pushing:
+1. git push origin your-branch
+2. Wait ~30 seconds
+3. git pull --rebase origin your-branch
+4. cat tests.log
+
+Initial test execution (local):
+
+================================================================================
+StockSimulator Comprehensive Test Suite
+Testing: IRR, Returns, Leveraged ETFs, Percentiles, Data Validation
+================================================================================
+
+test_irr_handles_loss_scenario (__main__.TestIRRCalculation.test_irr_handles_loss_scenario) ... ok
+test_irr_handles_zero_return (__main__.TestIRRCalculation.test_irr_handles_zero_return) ... ok
+test_irr_rejects_empty_cash_flows (__main__.TestIRRCalculation.test_irr_rejects_empty_cash_flows) ... ok
+test_irr_rejects_extreme_values (__main__.TestIRRCalculation.test_irr_rejects_extreme_values) ... ok
+test_irr_rejects_mismatched_lengths (__main__.TestIRRCalculation.test_irr_rejects_mismatched_lengths) ... ok
+test_irr_rejects_single_cash_flow (__main__.TestIRRCalculation.test_irr_rejects_single_cash_flow) ... ok
+test_irr_with_monthly_contributions (__main__.TestIRRCalculation.test_irr_with_monthly_contributions) ... ok
+test_simple_irr_calculation (__main__.TestIRRCalculation.test_simple_irr_calculation) ... ok
+test_annualized_return_calculation (__main__.TestReturnCalculations.test_annualized_return_calculation) ... ok
+test_cumulative_return_calculation (__main__.TestReturnCalculations.test_cumulative_return_calculation) ... ok
+test_daily_returns_calculation (__main__.TestReturnCalculations.test_daily_returns_calculation) ... ok
+test_leveraged_return_calculation (__main__.TestReturnCalculations.test_leveraged_return_calculation) ... ok
+test_daily_rebalancing (__main__.TestLeveragedETFSimulation.test_daily_rebalancing) ... ok
+test_ter_reduces_returns (__main__.TestLeveragedETFSimulation.test_ter_reduces_returns) ... ok
+test_volatility_decay_effect (__main__.TestLeveragedETFSimulation.test_volatility_decay_effect) ... ok
+test_calculate_percentiles_basic (__main__.TestPercentileCalculations.test_calculate_percentiles_basic) ... ok
+test_percentiles_sorted_correctly (__main__.TestPercentileCalculations.test_percentiles_sorted_correctly) ... ok
+test_percentiles_with_small_dataset (__main__.TestPercentileCalculations.test_percentiles_with_small_dataset) ... ok
+test_csv_reading_filters_invalid_prices (__main__.TestDataValidation.test_csv_reading_filters_invalid_prices) ... ok
+test_date_filtering_by_year (__main__.TestDataValidation.test_date_filtering_by_year) ... ok
+test_dollar_cost_averaging_math (__main__.TestMonthlyInvestmentSimulation.test_dollar_cost_averaging_math) ... ok
+test_monthly_investment_timing (__main__.TestMonthlyInvestmentSimulation.test_monthly_investment_timing) ... ok
+test_division_by_zero_protection (__main__.TestEdgeCases.test_division_by_zero_protection) ... ok
+test_empty_data_handling (__main__.TestEdgeCases.test_empty_data_handling) ... ok
+test_single_day_return_edge_case (__main__.TestEdgeCases.test_single_day_return_edge_case) ... ok
+test_full_investment_cycle (__main__.TestIntegration.test_full_investment_cycle) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.006s
+
+OK
+
+================================================================================
+Tests run: 26
+Successes: 26
+Failures: 0
+Errors: 0
+================================================================================
+
+================================================
+✅ ALL TESTS PASSED (initial local run)
+================================================
