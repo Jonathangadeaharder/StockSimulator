@@ -2,7 +2,7 @@
 
 ## 🎯 Executive Summary
 
-**Verified Computation**: All calculations have been verified for accuracy (see verification results above).
+**Verified Computation**: All calculations have been verified for accuracy.
 
 **Major Finding**: The optimal strategy (DCA vs Lump-Sum) **varies significantly by market type**!
 

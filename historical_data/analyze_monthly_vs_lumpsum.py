@@ -6,7 +6,6 @@ Compare Monthly Investing ($500/month) vs Lump-Sum Investment
 
 import csv
 from datetime import datetime, timedelta
-import math
 
 def read_daily_data(filename='sp500_stooq_daily.csv', start_year=1950):
     """Read daily S&P 500 data"""
@@ -58,6 +57,65 @@ def simulate_leveraged_etf_daily(returns, leverage=2.0, ter=0.006):
         })
     return leveraged_returns
 
+def calculate_xirr(cash_flows, dates, guess=0.1):
+    """
+    Calculate XIRR (Extended Internal Rate of Return) using Newton-Raphson method.
+    
+    Args:
+        cash_flows: List of cash flows (negative for outflows, positive for inflows)
+        dates: List of dates corresponding to cash flows
+        guess: Initial guess for the rate (default 0.1 = 10%)
+    
+    Returns:
+        Annualized IRR as a decimal (e.g., 0.08 for 8%), or None if calculation fails
+    """
+    if len(cash_flows) != len(dates) or len(cash_flows) < 2:
+        return None
+    
+    # Check if all cash flows are zero or same sign
+    if abs(sum(cash_flows)) < 1e-6 or all(cf >= 0 for cf in cash_flows) or all(cf <= 0 for cf in cash_flows):
+        return None
+    
+    # Sort by date
+    sorted_pairs = sorted(zip(dates, cash_flows))
+    dates = [d for d, _ in sorted_pairs]
+    cash_flows = [cf for _, cf in sorted_pairs]
+    
+    base_date = dates[0]
+    days_diff = [(d - base_date).days for d in dates]
+    
+    # Newton-Raphson method
+    rate = guess
+    max_iterations = 100
+    tolerance = 1e-6
+    
+    for _ in range(max_iterations):
+        # Calculate NPV and derivative
+        npv = 0
+        dnpv = 0
+        
+        for i, cf in enumerate(cash_flows):
+            years = days_diff[i] / 365.25
+            discount_factor = (1 + rate) ** years
+            npv += cf / discount_factor
+            dnpv -= cf * years / discount_factor / (1 + rate)
+        
+        # Check convergence
+        if abs(npv) < tolerance:
+            return rate
+        
+        # Update rate
+        if abs(dnpv) < 1e-10:
+            return None
+        
+        rate = rate - npv / dnpv
+        
+        # Prevent extreme values
+        if rate < -0.99 or rate > 10:
+            return None
+    
+    return None
+
 def simulate_monthly_investing(returns, monthly_amount=500, years=5):
     """
     Simulate monthly investing strategy
@@ -93,6 +151,10 @@ def simulate_monthly_investing(returns, monthly_amount=500, years=5):
 
         total_invested = 0
         month = 0
+        
+        # Track cash flows for IRR calculation
+        contribution_dates = []
+        contribution_amounts = []
 
         # Track monthly investment dates
         for i in range(start_idx, end_idx):
@@ -113,6 +175,10 @@ def simulate_monthly_investing(returns, monthly_amount=500, years=5):
                 lev_shares += monthly_amount / lev_price
                 unlev_shares += monthly_amount / unlev_price
                 total_invested += monthly_amount
+                
+                # Track contribution for IRR calculation (negative = outflow)
+                contribution_dates.append(ret['date'])
+                contribution_amounts.append(-monthly_amount)
 
         # Calculate final values
         lev_final_value = lev_shares * lev_price
@@ -124,9 +190,25 @@ def simulate_monthly_investing(returns, monthly_amount=500, years=5):
 
         actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
 
-        # Annualized return: (Final/Initial)^(1/years) - 1
-        lev_annualized = ((lev_final_value / total_invested) ** (1/actual_years) - 1) * 100 if total_invested > 0 and actual_years > 0 else 0
-        unlev_annualized = ((unlev_final_value / total_invested) ** (1/actual_years) - 1) * 100 if total_invested > 0 and actual_years > 0 else 0
+        # Calculate annualized return using XIRR (cash-flow aware)
+        # Build cash flow series: negative contributions + positive final value
+        lev_cash_flows = contribution_amounts + [lev_final_value]
+        unlev_cash_flows = contribution_amounts + [unlev_final_value]
+        cash_flow_dates = contribution_dates + [returns[end_idx]['date']]
+        
+        # Calculate XIRR and convert to percentage
+        lev_irr = calculate_xirr(lev_cash_flows, cash_flow_dates)
+        unlev_irr = calculate_xirr(unlev_cash_flows, cash_flow_dates)
+        
+        # Convert IRR to annualized percentage, fallback to NaN if calculation fails
+        lev_annualized = (lev_irr * 100) if lev_irr is not None else float('nan')
+        unlev_annualized = (unlev_irr * 100) if unlev_irr is not None else float('nan')
+        if lev_irr is None or unlev_irr is None:
+            print(f"Warning: XIRR calculation failed for period {returns[start_idx]['date']} to {returns[end_idx]['date']}")
+        # Additional safety check for invalid years
+        if actual_years <= 0:
+            lev_annualized = 0
+            unlev_annualized = 0
 
         results.append({
             'start_date': returns[start_idx]['date'],

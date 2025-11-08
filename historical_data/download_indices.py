@@ -3,7 +3,6 @@
 
 import urllib.request
 import time
-import sys
 
 def download_file(url, filename, delay=2):
     """Download a file with retry logic"""

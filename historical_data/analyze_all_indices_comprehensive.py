@@ -93,29 +93,37 @@ class IndexAnalyzer:
             for i in range(start_idx, end_idx):
                 ret = returns[i]
 
-                lev_price *= (1 + ret['lev_return'])
-                unlev_price *= (1 + ret['unlev_return'])
-
+                # First check if we've crossed any month boundaries before applying this day's return
                 days_since_start = (ret['date'] - returns[start_idx]['date']).days
                 expected_month = days_since_start / 30.44
-
-                if int(expected_month) > month and month < months_needed:
-                    month = int(expected_month)
+                target_month = int(expected_month)
+                
+                # Apply monthly investments for any months we've entered since last iteration
+                # Use the price from the START of this day (before applying today's return)
+                # Note: If data is sparse and multiple months are crossed at once, all investments
+                # use the same price. This is a reasonable approximation when intermediate data is unavailable.
+                while month < target_month and month < months_needed:
+                    month += 1
                     lev_shares += monthly_amount / lev_price
                     unlev_shares += monthly_amount / unlev_price
                     total_invested += monthly_amount
 
+                # Now update prices with this day's return (after monthly investments)
+                lev_price *= (1 + ret['lev_return'])
+                unlev_price *= (1 + ret['unlev_return'])
+
             lev_final_value = lev_shares * lev_price
             unlev_final_value = unlev_shares * unlev_price
 
-            actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
+            period_end = returns[end_idx - 1]
+            actual_years = (period_end['date'] - returns[start_idx]['date']).days / 365.25
 
             lev_annualized = ((lev_final_value / total_invested) ** (1/actual_years) - 1) * 100 if total_invested > 0 and actual_years > 0 else 0
             unlev_annualized = ((unlev_final_value / total_invested) ** (1/actual_years) - 1) * 100 if total_invested > 0 and actual_years > 0 else 0
 
             results.append({
                 'start_date': returns[start_idx]['date'],
-                'end_date': returns[end_idx]['date'],
+                'end_date': period_end['date'],
                 'years': actual_years,
                 'total_invested': total_invested,
                 'lev_final_value': lev_final_value,
@@ -150,14 +158,15 @@ class IndexAnalyzer:
             lev_final_value = initial_amount * lev_cumulative
             unlev_final_value = initial_amount * unlev_cumulative
 
-            actual_years = (returns[end_idx]['date'] - returns[start_idx]['date']).days / 365.25
+            period_end = returns[end_idx - 1]
+            actual_years = (period_end['date'] - returns[start_idx]['date']).days / 365.25
 
             lev_annualized = ((lev_cumulative) ** (1/actual_years) - 1) * 100
             unlev_annualized = ((unlev_cumulative) ** (1/actual_years) - 1) * 100
 
             results.append({
                 'start_date': returns[start_idx]['date'],
-                'end_date': returns[end_idx]['date'],
+                'end_date': period_end['date'],
                 'years': actual_years,
                 'total_invested': initial_amount,
                 'lev_final_value': lev_final_value,
