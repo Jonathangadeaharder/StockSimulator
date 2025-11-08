@@ -99,8 +99,9 @@ class IndexAnalyzer:
                 days_since_start = (ret['date'] - returns[start_idx]['date']).days
                 expected_month = days_since_start / 30.44
 
-                if int(expected_month) > month and month < months_needed:
-                    month = int(expected_month)
+                target_month = int(expected_month)
+                while month < target_month and month < months_needed:
+                    month += 1
                     lev_shares += monthly_amount / lev_price
                     unlev_shares += monthly_amount / unlev_price
                     total_invested += monthly_amount
