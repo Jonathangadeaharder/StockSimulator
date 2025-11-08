@@ -157,6 +157,18 @@ class MonthlyInvestmentComparison:
 
         return results
 
+    def calculate_percentiles(self, values, percentiles=[10, 25, 50, 75, 90]):
+        """Calculate percentiles from a list of values"""
+        sorted_values = sorted(values)
+        n = len(sorted_values)
+        result = {}
+        for p in percentiles:
+            idx = int(n * p / 100)
+            if idx >= n:
+                idx = n - 1
+            result[p] = sorted_values[idx]
+        return result
+
     def analyze(self, timeframes=[5, 10, 15], monthly_amount=500):
         """Run analysis"""
         print("=" * 120)
@@ -193,6 +205,44 @@ class MonthlyInvestmentComparison:
             print(f"  $500/month → 2x Leveraged: {monthly_lev_wins:>4} wins ({100*monthly_lev_wins/len(results):>5.1f}%)")
             print(f"  $500/month → Non-Leveraged: {monthly_unlev_wins:>4} wins ({100*monthly_unlev_wins/len(results):>5.1f}%)")
             print(f"  Lump-Sum → 2x Leveraged:  {lump_lev_wins:>4} wins ({100*lump_lev_wins/len(results):>5.1f}%) [reference]")
+            print()
+
+            # Percentile analysis
+            monthly_lev_returns = [r['monthly_lev_ann'] for r in results]
+            monthly_unlev_returns = [r['monthly_unlev_ann'] for r in results]
+            lump_lev_returns = [r['lump_lev_ann'] for r in results]
+
+            monthly_lev_percentiles = self.calculate_percentiles(monthly_lev_returns)
+            monthly_unlev_percentiles = self.calculate_percentiles(monthly_unlev_returns)
+            lump_lev_percentiles = self.calculate_percentiles(lump_lev_returns)
+
+            print("-" * 120)
+            print("RETURN PERCENTILES (Annualized %)")
+            print("-" * 120)
+            print(f"{'Strategy':<30} {'10th %':<12} {'25th %':<12} {'50th %':<12} {'75th %':<12} {'90th %':<12}")
+            print("-" * 120)
+            print(f"{'Monthly 2x Leveraged':<30} {monthly_lev_percentiles[10]:>10.2f}% {monthly_lev_percentiles[25]:>10.2f}% {monthly_lev_percentiles[50]:>10.2f}% {monthly_lev_percentiles[75]:>10.2f}% {monthly_lev_percentiles[90]:>10.2f}%")
+            print(f"{'Monthly Non-Leveraged':<30} {monthly_unlev_percentiles[10]:>10.2f}% {monthly_unlev_percentiles[25]:>10.2f}% {monthly_unlev_percentiles[50]:>10.2f}% {monthly_unlev_percentiles[75]:>10.2f}% {monthly_unlev_percentiles[90]:>10.2f}%")
+            print(f"{'Lump-Sum 2x Leveraged':<30} {lump_lev_percentiles[10]:>10.2f}% {lump_lev_percentiles[25]:>10.2f}% {lump_lev_percentiles[50]:>10.2f}% {lump_lev_percentiles[75]:>10.2f}% {lump_lev_percentiles[90]:>10.2f}%")
+            print()
+
+            # Final value percentiles
+            monthly_lev_values = [r['monthly_lev_final'] for r in results]
+            monthly_unlev_values = [r['monthly_unlev_final'] for r in results]
+            lump_lev_values = [r['lump_lev_final'] for r in results]
+
+            monthly_lev_val_pct = self.calculate_percentiles(monthly_lev_values)
+            monthly_unlev_val_pct = self.calculate_percentiles(monthly_unlev_values)
+            lump_lev_val_pct = self.calculate_percentiles(lump_lev_values)
+
+            print("-" * 120)
+            print(f"FINAL VALUE PERCENTILES (from ${total_investment:,} invested)")
+            print("-" * 120)
+            print(f"{'Strategy':<30} {'10th %':<15} {'25th %':<15} {'50th %':<15} {'75th %':<15} {'90th %':<15}")
+            print("-" * 120)
+            print(f"{'Monthly 2x Leveraged':<30} ${monthly_lev_val_pct[10]:>13,.0f} ${monthly_lev_val_pct[25]:>13,.0f} ${monthly_lev_val_pct[50]:>13,.0f} ${monthly_lev_val_pct[75]:>13,.0f} ${monthly_lev_val_pct[90]:>13,.0f}")
+            print(f"{'Monthly Non-Leveraged':<30} ${monthly_unlev_val_pct[10]:>13,.0f} ${monthly_unlev_val_pct[25]:>13,.0f} ${monthly_unlev_val_pct[50]:>13,.0f} ${monthly_unlev_val_pct[75]:>13,.0f} ${monthly_unlev_val_pct[90]:>13,.0f}")
+            print(f"{'Lump-Sum 2x Leveraged':<30} ${lump_lev_val_pct[10]:>13,.0f} ${lump_lev_val_pct[25]:>13,.0f} ${lump_lev_val_pct[50]:>13,.0f} ${lump_lev_val_pct[75]:>13,.0f} ${lump_lev_val_pct[90]:>13,.0f}")
             print()
 
             # Find worst for each strategy
@@ -247,7 +297,13 @@ class MonthlyInvestmentComparison:
                 'lump_lev_wins': lump_lev_wins,
                 'worst_monthly_lev': worst_monthly_lev,
                 'worst_monthly_unlev': worst_monthly_unlev,
-                'worst_lump_lev': worst_lump_lev
+                'worst_lump_lev': worst_lump_lev,
+                'monthly_lev_percentiles': monthly_lev_percentiles,
+                'monthly_unlev_percentiles': monthly_unlev_percentiles,
+                'lump_lev_percentiles': lump_lev_percentiles,
+                'monthly_lev_val_pct': monthly_lev_val_pct,
+                'monthly_unlev_val_pct': monthly_unlev_val_pct,
+                'lump_lev_val_pct': lump_lev_val_pct
             }
 
         return summary
@@ -298,6 +354,67 @@ for years in [5, 10, 15]:
             print(f"{idx_name:<20} {r['monthly_lev_wins']:>6} ({100*r['monthly_lev_wins']/total:>5.1f}%)           "
                   f"{r['monthly_unlev_wins']:>6} ({100*r['monthly_unlev_wins']/total:>5.1f}%)           "
                   f"{r['lump_lev_wins']:>6} ({100*r['lump_lev_wins']/total:>5.1f}%)")
+    print()
+
+print("=" * 120)
+print()
+print()
+
+# Percentile Summary Tables
+print("=" * 120)
+print("PERCENTILE SUMMARY: ANNUALIZED RETURNS")
+print("=" * 120)
+print()
+
+for years in [5, 10, 15]:
+    print(f"{years}-YEAR PERIODS - Annualized Return Percentiles:")
+    print("-" * 120)
+
+    for idx_name, results in all_results.items():
+        if years in results:
+            r = results[years]
+            print(f"\n{idx_name}:")
+            print(f"{'Strategy':<30} {'10th %':<12} {'25th %':<12} {'50th %':<12} {'75th %':<12} {'90th %':<12}")
+            print("-" * 120)
+
+            ml = r['monthly_lev_percentiles']
+            mu = r['monthly_unlev_percentiles']
+            ll = r['lump_lev_percentiles']
+
+            print(f"{'Monthly 2x Leveraged':<30} {ml[10]:>10.2f}% {ml[25]:>10.2f}% {ml[50]:>10.2f}% {ml[75]:>10.2f}% {ml[90]:>10.2f}%")
+            print(f"{'Monthly Non-Leveraged':<30} {mu[10]:>10.2f}% {mu[25]:>10.2f}% {mu[50]:>10.2f}% {mu[75]:>10.2f}% {mu[90]:>10.2f}%")
+            print(f"{'Lump-Sum 2x Leveraged':<30} {ll[10]:>10.2f}% {ll[25]:>10.2f}% {ll[50]:>10.2f}% {ll[75]:>10.2f}% {ll[90]:>10.2f}%")
+    print()
+
+print("=" * 120)
+print()
+print()
+
+# Final Value Percentiles
+print("=" * 120)
+print("PERCENTILE SUMMARY: FINAL VALUES")
+print("=" * 120)
+print()
+
+for years in [5, 10, 15]:
+    total_investment = 500 * years * 12
+    print(f"{years}-YEAR PERIODS - Final Value Percentiles (from ${total_investment:,} invested):")
+    print("-" * 120)
+
+    for idx_name, results in all_results.items():
+        if years in results:
+            r = results[years]
+            print(f"\n{idx_name}:")
+            print(f"{'Strategy':<30} {'10th %':<15} {'25th %':<15} {'50th %':<15} {'75th %':<15} {'90th %':<15}")
+            print("-" * 120)
+
+            ml = r['monthly_lev_val_pct']
+            mu = r['monthly_unlev_val_pct']
+            ll = r['lump_lev_val_pct']
+
+            print(f"{'Monthly 2x Leveraged':<30} ${ml[10]:>13,.0f} ${ml[25]:>13,.0f} ${ml[50]:>13,.0f} ${ml[75]:>13,.0f} ${ml[90]:>13,.0f}")
+            print(f"{'Monthly Non-Leveraged':<30} ${mu[10]:>13,.0f} ${mu[25]:>13,.0f} ${mu[50]:>13,.0f} ${mu[75]:>13,.0f} ${mu[90]:>13,.0f}")
+            print(f"{'Lump-Sum 2x Leveraged':<30} ${ll[10]:>13,.0f} ${ll[25]:>13,.0f} ${ll[50]:>13,.0f} ${ll[75]:>13,.0f} ${ll[90]:>13,.0f}")
     print()
 
 print("=" * 120)
