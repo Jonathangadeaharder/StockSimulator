@@ -1,57 +1,142 @@
 ================================================
 Test Execution Log
-Branch: (initial)
-Commit: (initial)
-Timestamp: 2025-01-08 (initial setup)
+Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
+Commit: a358e8ebbe6462b28c0116bd9f0c1fdd6aba97f9
+Timestamp: 2025-11-08 15:43:51 UTC
 ================================================
 
-This file will be automatically updated by the GitHub Action
-whenever you push to the repository.
+test_irr_handles_loss_scenario (__main__.TestIRRCalculation)
+IRR should correctly calculate negative returns. ... ok
+test_irr_handles_zero_return (__main__.TestIRRCalculation)
+IRR should handle break-even scenarios. ... ok
+test_irr_rejects_empty_cash_flows (__main__.TestIRRCalculation)
+IRR should return None for empty inputs. ... ok
+test_irr_rejects_extreme_values (__main__.TestIRRCalculation)
+IRR should reject unrealistic rates beyond sanity bounds. ... ok
+test_irr_rejects_mismatched_lengths (__main__.TestIRRCalculation)
+IRR should return None if cash flows and dates don't match. ... ok
+test_irr_rejects_single_cash_flow (__main__.TestIRRCalculation)
+IRR needs at least 2 cash flows. ... ok
+test_irr_with_monthly_contributions (__main__.TestIRRCalculation)
+IRR should handle monthly contribution patterns. ... ok
+test_simple_irr_calculation (__main__.TestIRRCalculation)
+IRR should correctly calculate for simple cash flows. ... ok
+test_annualized_return_calculation (__main__.TestReturnCalculations)
+Annualized returns should compound correctly. ... ok
+test_cumulative_return_calculation (__main__.TestReturnCalculations)
+Cumulative returns should compound daily returns. ... ok
+test_daily_returns_calculation (__main__.TestReturnCalculations)
+Daily returns should be calculated correctly. ... ok
+test_leveraged_return_calculation (__main__.TestReturnCalculations)
+Leveraged returns should apply 2x multiplier and TER. ... ok
+test_daily_rebalancing (__main__.TestLeveragedETFSimulation)
+Leverage should rebalance daily to 2x. ... ok
+test_ter_reduces_returns (__main__.TestLeveragedETFSimulation)
+TER should reduce leveraged returns. ... ok
+test_volatility_decay_effect (__main__.TestLeveragedETFSimulation)
+Leveraged ETF should experience volatility decay. ... ok
+test_calculate_percentiles_basic (__main__.TestPercentileCalculations)
+Percentiles should correctly identify distribution points. ... ok
+test_percentiles_sorted_correctly (__main__.TestPercentileCalculations)
+Percentiles should sort unsorted data. ... ok
+test_percentiles_with_small_dataset (__main__.TestPercentileCalculations)
+Percentiles should handle small datasets. ... ok
+test_csv_reading_filters_invalid_prices (__main__.TestDataValidation)
+CSV reader should filter out zero/negative/missing prices. ... ok
+test_date_filtering_by_year (__main__.TestDataValidation)
+Data reader should filter dates before start year. ... ok
+test_dollar_cost_averaging_math (__main__.TestMonthlyInvestmentSimulation)
+DCA should buy more shares when price is low. ... ok
+test_monthly_investment_timing (__main__.TestMonthlyInvestmentSimulation)
+Monthly investments should occur approximately every 30 days. ... ok
+test_division_by_zero_protection (__main__.TestEdgeCases)
+Calculations should handle zero denominators gracefully. ... ok
+test_empty_data_handling (__main__.TestEdgeCases)
+Functions should handle empty datasets gracefully. ... ok
+test_single_day_return_edge_case (__main__.TestEdgeCases)
+Should handle minimum data requirements. ... ok
+test_full_investment_cycle (__main__.TestIntegration)
+Test complete investment simulation cycle. ... ok
 
-To see test results after pushing:
-1. git push origin your-branch
-2. Wait ~30 seconds
-3. git pull --rebase origin your-branch
-4. cat tests.log
+----------------------------------------------------------------------
+Ran 26 tests in 0.008s
 
-Initial test execution (local):
+OK
 
+╔======================================================================================================================╗
+║                                        PAIRWISE COMPARISON ANALYSIS                                                  ║
+║                         Head-to-Head: Leveraged vs Non-Leveraged Strategies                                          ║
+╚======================================================================================================================╝
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: S&P 500
+========================================================================================================================
+
+Error analyzing S&P 500: [Errno 2] No such file or directory: 'sp500_stooq_daily.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: DJIA
+========================================================================================================================
+
+Error analyzing DJIA: [Errno 2] No such file or directory: 'djia_stooq_daily.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: NASDAQ
+========================================================================================================================
+
+Error analyzing NASDAQ: [Errno 2] No such file or directory: 'nasdaq_fred.csv'
+
+========================================================================================================================
+PAIRWISE COMPARISON ANALYSIS: Nikkei 225
+========================================================================================================================
+
+Error analyzing Nikkei 225: [Errno 2] No such file or directory: 'nikkei225_fred.csv'
+
+
+========================================================================================================================
+SUMMARY: WIN RATES BY COMPARISON
+========================================================================================================================
+
+COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged
+------------------------------------------------------------------------------------------------------------------------
+
+5-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+10-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+15-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+========================================================================================================================
+
+COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged
+------------------------------------------------------------------------------------------------------------------------
+
+5-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+10-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+15-YEAR PERIODS:
+Index                Leveraged Win Rate             Non-Leveraged Win Rate        
+------------------------------------------------------------------------------------------------------------------------
+
+========================================================================================================================
+
+========================================================================================================================
 ================================================================================
 StockSimulator Comprehensive Test Suite
 Testing: IRR, Returns, Leveraged ETFs, Percentiles, Data Validation
 ================================================================================
 
-test_irr_handles_loss_scenario (__main__.TestIRRCalculation.test_irr_handles_loss_scenario) ... ok
-test_irr_handles_zero_return (__main__.TestIRRCalculation.test_irr_handles_zero_return) ... ok
-test_irr_rejects_empty_cash_flows (__main__.TestIRRCalculation.test_irr_rejects_empty_cash_flows) ... ok
-test_irr_rejects_extreme_values (__main__.TestIRRCalculation.test_irr_rejects_extreme_values) ... ok
-test_irr_rejects_mismatched_lengths (__main__.TestIRRCalculation.test_irr_rejects_mismatched_lengths) ... ok
-test_irr_rejects_single_cash_flow (__main__.TestIRRCalculation.test_irr_rejects_single_cash_flow) ... ok
-test_irr_with_monthly_contributions (__main__.TestIRRCalculation.test_irr_with_monthly_contributions) ... ok
-test_simple_irr_calculation (__main__.TestIRRCalculation.test_simple_irr_calculation) ... ok
-test_annualized_return_calculation (__main__.TestReturnCalculations.test_annualized_return_calculation) ... ok
-test_cumulative_return_calculation (__main__.TestReturnCalculations.test_cumulative_return_calculation) ... ok
-test_daily_returns_calculation (__main__.TestReturnCalculations.test_daily_returns_calculation) ... ok
-test_leveraged_return_calculation (__main__.TestReturnCalculations.test_leveraged_return_calculation) ... ok
-test_daily_rebalancing (__main__.TestLeveragedETFSimulation.test_daily_rebalancing) ... ok
-test_ter_reduces_returns (__main__.TestLeveragedETFSimulation.test_ter_reduces_returns) ... ok
-test_volatility_decay_effect (__main__.TestLeveragedETFSimulation.test_volatility_decay_effect) ... ok
-test_calculate_percentiles_basic (__main__.TestPercentileCalculations.test_calculate_percentiles_basic) ... ok
-test_percentiles_sorted_correctly (__main__.TestPercentileCalculations.test_percentiles_sorted_correctly) ... ok
-test_percentiles_with_small_dataset (__main__.TestPercentileCalculations.test_percentiles_with_small_dataset) ... ok
-test_csv_reading_filters_invalid_prices (__main__.TestDataValidation.test_csv_reading_filters_invalid_prices) ... ok
-test_date_filtering_by_year (__main__.TestDataValidation.test_date_filtering_by_year) ... ok
-test_dollar_cost_averaging_math (__main__.TestMonthlyInvestmentSimulation.test_dollar_cost_averaging_math) ... ok
-test_monthly_investment_timing (__main__.TestMonthlyInvestmentSimulation.test_monthly_investment_timing) ... ok
-test_division_by_zero_protection (__main__.TestEdgeCases.test_division_by_zero_protection) ... ok
-test_empty_data_handling (__main__.TestEdgeCases.test_empty_data_handling) ... ok
-test_single_day_return_edge_case (__main__.TestEdgeCases.test_single_day_return_edge_case) ... ok
-test_full_investment_cycle (__main__.TestIntegration.test_full_investment_cycle) ... ok
-
-----------------------------------------------------------------------
-Ran 26 tests in 0.006s
-
-OK
 
 ================================================================================
 Tests run: 26
@@ -61,5 +146,5 @@ Errors: 0
 ================================================================================
 
 ================================================
-✅ ALL TESTS PASSED (initial local run)
+✅ ALL TESTS PASSED
 ================================================
