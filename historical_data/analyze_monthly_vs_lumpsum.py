@@ -74,7 +74,7 @@ def calculate_xirr(cash_flows, dates, guess=0.1):
         return None
     
     # Check if all cash flows are zero or same sign
-    if sum(cash_flows) == 0 or all(cf >= 0 for cf in cash_flows) or all(cf <= 0 for cf in cash_flows):
+    if abs(sum(cash_flows)) < 1e-6 or all(cf >= 0 for cf in cash_flows) or all(cf <= 0 for cf in cash_flows):
         return None
     
     # Sort by date
