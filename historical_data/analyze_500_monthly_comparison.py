@@ -111,8 +111,11 @@ class MonthlyInvestmentComparison:
                 # Monthly investments
                 days_since_start = (ret['date'] - returns[start_idx]['date']).days
                 expected_month = days_since_start / 30.44
-                if int(expected_month) > month and month < months_needed:
-                    month = int(expected_month)
+                target_month = min(int(expected_month), months_needed - 1)
+                
+                # Process all missed months to ensure no deposits are skipped
+                while month < target_month and month < months_needed:
+                    month += 1
                     # Buy shares for monthly strategies
                     monthly_lev_shares += monthly_amount / monthly_lev_price
                     monthly_unlev_shares += monthly_amount / monthly_unlev_price
