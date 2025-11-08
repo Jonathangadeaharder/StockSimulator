@@ -201,10 +201,11 @@ def simulate_monthly_investing(returns, monthly_amount=500, years=5):
         lev_irr = calculate_xirr(lev_cash_flows, cash_flow_dates)
         unlev_irr = calculate_xirr(unlev_cash_flows, cash_flow_dates)
         
-        # Convert IRR to annualized percentage, fallback to 0 if calculation fails
-        lev_annualized = (lev_irr * 100) if lev_irr is not None else 0
-        unlev_annualized = (unlev_irr * 100) if unlev_irr is not None else 0
-        
+        # Convert IRR to annualized percentage, fallback to NaN if calculation fails
+        lev_annualized = (lev_irr * 100) if lev_irr is not None else float('nan')
+        unlev_annualized = (unlev_irr * 100) if unlev_irr is not None else float('nan')
+        if lev_irr is None or unlev_irr is None:
+            print(f"Warning: XIRR calculation failed for period {returns[start_idx]['date']} to {returns[end_idx]['date']}")
         # Additional safety check for invalid years
         if actual_years <= 0:
             lev_annualized = 0
