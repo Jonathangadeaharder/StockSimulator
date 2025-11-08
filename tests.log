@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
-Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
-Commit: 544146ee041143a90a245f58ec20a9c9062a4e43
-Timestamp: 2025-11-08 20:22:13 UTC
+Branch: 13/merge
+Commit: 16d966250d5e09bf440b7424cea23c5136f965ef
+Timestamp: 2025-11-08 21:01:33 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.076s
+Ran 26 tests in 0.016s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -220,7 +220,7 @@ test_percentile_calculations_are_monotonic (tests.test_financial_validation.Test
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.122s
+Ran 17 tests in 2.117s
 
 OK
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
