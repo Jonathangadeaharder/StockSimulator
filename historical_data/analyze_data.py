@@ -31,7 +31,7 @@ def analyze_csv(filename, date_col='Date', value_col=None):
             first_dt = datetime.strptime(first_date, '%Y-%m-%d')
             last_dt = datetime.strptime(last_date, '%Y-%m-%d')
             years = (last_dt - first_dt).days / 365.25
-        except:
+        except Exception:
             years = None
 
         return {
