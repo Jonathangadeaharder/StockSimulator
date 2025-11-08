@@ -43,8 +43,8 @@ jobs:
           echo "================================================" >> tests.log
           echo "" >> tests.log
 
-          # Run tests and capture both stdout and stderr
-          if python3 tests/test_analysis_suite.py >> tests.log 2>&1; then
+          # Run comprehensive test suite (unit + validation tests)
+          if python3 tests/run_all_tests.py >> tests.log 2>&1; then
             echo "" >> tests.log
             echo "================================================" >> tests.log
             echo "✅ ALL TESTS PASSED" >> tests.log
