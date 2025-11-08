@@ -4,7 +4,6 @@ Verify the computation logic for monthly DCA vs lump-sum analysis
 Step-by-step verification with detailed output
 """
 
-import csv
 
 def verify_leveraged_etf_simulation():
     """Verify that 2x leveraged ETF simulation is correct"""
