@@ -5,7 +5,6 @@ Step-by-step verification with detailed output
 """
 
 import csv
-from datetime import datetime, timedelta
 
 def verify_leveraged_etf_simulation():
     """Verify that 2x leveraged ETF simulation is correct"""
