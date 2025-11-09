@@ -1,8 +1,8 @@
 """
-API modules for external integrations
+API modules (not implemented - focus is on backtesting and analysis)
 """
 
-from .auth import AuthManager
-from .routes import APIRoutes
+# API features are not included in this version
+# The platform focuses on historical backtesting and strategy analysis
 
-__all__ = ['AuthManager', 'APIRoutes']
+__all__ = []
