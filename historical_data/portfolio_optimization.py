@@ -85,10 +85,11 @@ class PortfolioOptimizer:
         total_return = (total_value / initial_investment - 1) * 100
         annualized_return = ((total_value / initial_investment) ** (1/actual_years) - 1) * 100
 
-        # Volatility (annualized std dev)
+        # Volatility (annualized std dev using sample variance)
         if len(daily_returns) > 1:
             mean_daily = sum(daily_returns) / len(daily_returns)
-            variance = sum((r - mean_daily) ** 2 for r in daily_returns) / len(daily_returns)
+            # Use sample variance (n-1) for unbiased estimator
+            variance = sum((r - mean_daily) ** 2 for r in daily_returns) / (len(daily_returns) - 1)
             daily_vol = variance ** 0.5
             annualized_vol = daily_vol * (252 ** 0.5) * 100
         else:

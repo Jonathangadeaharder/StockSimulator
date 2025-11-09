@@ -38,10 +38,11 @@ class VolatilityImpactAnalyzer:
             window = returns[i-window_days:i]
             daily_returns = [r['return'] for r in window]
 
-            # Calculate standard deviation
+            # Calculate standard deviation (using sample variance)
             n = len(daily_returns)
             mean = sum(daily_returns) / n
-            variance = sum((r - mean) ** 2 for r in daily_returns) / n
+            # Use sample variance (n-1) for unbiased estimator
+            variance = sum((r - mean) ** 2 for r in daily_returns) / (n - 1) if n > 1 else 0
             std_dev = variance ** 0.5
 
             # Annualize (252 trading days per year)

@@ -241,10 +241,12 @@ class RobustnessAnalyzer:
                     'ci_90_lower': values[0],
                     'ci_90_upper': values[0],
                 }
+            mean = sum(values) / n
+            # Use sample variance (n-1) for unbiased estimator
             return {
-                'mean': sum(values) / n,
+                'mean': mean,
                 'median': values[n//2],
-                'std': (sum((x - sum(values)/n)**2 for x in values) / n) ** 0.5,
+                'std': (sum((x - mean)**2 for x in values) / (n - 1)) ** 0.5,
                 'min': values[0],
                 'max': values[-1],
                 'ci_95_lower': values[max(0, int(n * 0.025))],
