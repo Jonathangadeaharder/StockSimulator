@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
-Commit: 043b0d2419209be0f24ff9213a86f8033cac284f
-Timestamp: 2025-11-09 23:23:30 UTC
+Commit: c30132af841ca3c59279025f54b4537dc531efa6
+Timestamp: 2025-11-09 23:46:34 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.015s
+Ran 26 tests in 0.047s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -125,7 +125,7 @@ Traceback (most recent call last):
 TypeError: PairwiseComparison.simulate_leveraged_etf() got an unexpected keyword argument 'ter'
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.106s
+Ran 17 tests in 2.132s
 
 FAILED (errors=3)
 ╔==============================================================================╗
