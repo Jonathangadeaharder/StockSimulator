@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
-Commit: 8c43319bd60b661fc04e628448c488355472402c
-Timestamp: 2025-11-09 11:35:23 UTC
+Commit: 205e9b288acc05af4f82c85f8dbe9abd486399fe
+Timestamp: 2025-11-09 13:07:56 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.038s
+Ran 26 tests in 0.015s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -125,7 +125,7 @@ Traceback (most recent call last):
 TypeError: PairwiseComparison.simulate_leveraged_etf() got an unexpected keyword argument 'ter'
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.101s
+Ran 17 tests in 2.107s
 
 FAILED (errors=3)
 ╔==============================================================================╗
@@ -155,27 +155,27 @@ COMPARISON 1: Lump-Sum $30,000 (2x Leveraged) vs Monthly $500 (Non-Leveraged)
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 Win Statistics (250 periods analyzed):
-  Lump-Sum 2x Leveraged wins:    169 ( 67.6%)
-  Monthly Non-Leveraged wins:      81 ( 32.4%)
+  Lump-Sum 2x Leveraged wins:    174 ( 69.6%)
+  Monthly Non-Leveraged wins:      76 ( 30.4%)
 
 Return Percentiles (Annualized %):
 Strategy                       10th %       25th %       50th %       75th %       90th %      
 ------------------------------------------------------------------------------------------------------------------------
-Lump-Sum 2x Leveraged               -8.94%      -3.53%      18.38%      25.41%      30.44%
+Lump-Sum 2x Leveraged               -7.83%      -2.53%      18.62%      25.88%      30.32%
 Monthly Non-Leveraged                0.95%       7.23%      11.84%      15.08%      17.37%
-Gap (Lump 2x - Non-Lev)            -13.58%      -6.79%       6.43%      10.58%      14.31%
+Gap (Lump 2x - Non-Lev)            -12.81%      -4.96%       7.36%      10.90%      14.29%
 
 Final Value Percentiles (from $30,000 invested):
 Strategy                       10th %          25th %          50th %          75th %          90th %         
 ------------------------------------------------------------------------------------------------------------------------
-Lump-Sum 2x Leveraged          $       18,777 $       25,067 $       69,766 $       93,108 $      113,416
+Lump-Sum 2x Leveraged          $       19,949 $       26,391 $       70,479 $       94,859 $      112,848
 Monthly Non-Leveraged          $       30,207 $       35,298 $       39,511 $       42,740 $       45,164
 
 Worst Period for Lump-Sum 2x (biggest underperformance):
-  Period: 2000-09 to 2005-09
-  Lump-Sum 2x: -11.59% ann. ($      16,201)
-  Monthly Non-Lev:   6.65% ann. ($      34,792)
-  Gap: -18.24% per year
+  Period: 2007-10 to 2012-10
+  Lump-Sum 2x:  -7.67% ann. ($      20,132)
+  Monthly Non-Lev:  10.61% ann. ($      38,344)
+  Gap: -18.27% per year
 
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -183,27 +183,27 @@ COMPARISON 2: Monthly $500 (2x Leveraged) vs Monthly $500 (Non-Leveraged)
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 Win Statistics (250 periods analyzed):
-  Monthly 2x Leveraged wins:     205 ( 82.0%)
-  Monthly Non-Leveraged wins:     45 ( 18.0%)
+  Monthly 2x Leveraged wins:     211 ( 84.4%)
+  Monthly Non-Leveraged wins:     39 ( 15.6%)
 
 Return Percentiles (Annualized %):
 Strategy                       10th %       25th %       50th %       75th %       90th %      
 ------------------------------------------------------------------------------------------------------------------------
-Monthly 2x Leveraged                -3.85%       9.07%      19.38%      25.78%      31.56%
+Monthly 2x Leveraged                -3.67%       9.96%      20.72%      26.42%      32.01%
 Monthly Non-Leveraged                0.95%       7.23%      11.84%      15.08%      17.37%
-Gap (Monthly 2x - Non-Lev)          -3.56%       1.53%       7.28%      10.85%      14.12%
+Gap (Monthly 2x - Non-Lev)          -3.10%       2.85%       8.67%      11.60%      14.44%
 
 Final Value Percentiles (from $30,000 invested):
 Strategy                       10th %          25th %          50th %          75th %          90th %         
 ------------------------------------------------------------------------------------------------------------------------
-Monthly 2x Leveraged           $       26,785 $       36,931 $       47,393 $       55,149 $       63,083
+Monthly 2x Leveraged           $       26,903 $       37,739 $       48,933 $       55,989 $       63,748
 Monthly Non-Leveraged          $       30,207 $       35,298 $       39,511 $       42,740 $       45,164
 
 Worst Period for Monthly 2x (biggest underperformance):
   Period: 2004-03 to 2009-03
-  Monthly 2x: -21.84% ann. ($       8,600)
+  Monthly 2x: -21.37% ann. ($       8,865)
   Monthly Non-Lev:  -9.36% ann. ($      18,048)
-  Gap: -12.49% per year
+  Gap: -12.01% per year
 
 
 

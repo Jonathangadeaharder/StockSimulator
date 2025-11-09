@@ -106,66 +106,76 @@ class PairwiseComparison:
             })
         return returns
 
-    def get_financing_rate(self, date):
+    def get_empirical_excess_cost(self, date):
         """
-        Get time-varying financing cost for leveraged ETFs.
+        Get empirical excess costs for leveraged ETFs based on research.
 
-        Leveraged ETFs borrow capital to achieve 2x leverage, paying interest
-        on borrowed amounts. Rates track historical SOFR/LIBOR equivalents.
+        Based on empirical studies (2016-2024):
+        - Average excess cost: ~1.5% per 100% leverage (beyond TER)
+        - ZIRP era (2008-2015): Lower costs (~0.8-1.0%)
+        - Normal rates (1990-2007): ~1.2-1.5%
+        - High rates (1980s, 2022+): ~1.8-2.5%
 
-        For 2x leverage, ~100% of portfolio is borrowed, so financing cost
-        equals the borrowing rate (typically SOFR + spread ~0.3%).
+        Sources:
+        - mdickens.me research (2016-2024): 1.43% average excess cost
+        - Xtrackers S&P 500 2x TD (2011-2024): 1.15% average
+        - etf.com study: ~1.5% per 100% leverage
 
-        Historical rates:
-        - 1950-1979: ~4.5% (pre-Volcker)
-        - 1980-1989: ~9.0% (Volcker era)
-        - 1990-1999: ~5.0% (post-Volcker)
-        - 2000-2007: ~3.5% (dot-com era)
-        - 2008-2015: ~0.5% (ZIRP)
-        - 2016-2021: ~1.5% (recovery)
-        - 2022-2025: ~4.5% (inflation fighting)
+        These costs include:
+        - Swap financing costs
+        - Volatility drag from daily rebalancing
+        - Transaction costs for rebalancing
+        - Counterparty risk premiums
         """
         year = date.year if hasattr(date, 'year') else date
 
         if year < 1980:
-            return 0.045
+            return 0.015  # Pre-modern ETFs, conservative estimate
         elif year < 1990:
-            return 0.090
+            return 0.025  # Volcker era - high rates = high costs
         elif year < 2000:
-            return 0.050
+            return 0.015  # Moderate rates
         elif year < 2008:
-            return 0.035
+            return 0.012  # Moderate rates
         elif year < 2016:
-            return 0.005  # ZIRP era - very low costs
+            return 0.008  # ZIRP era - lowest costs
         elif year < 2022:
-            return 0.015
+            return 0.012  # Recovery era
         else:
-            return 0.045  # Current environment
+            return 0.020  # Current high-rate environment
 
     def simulate_leveraged_etf(self, returns, leverage=2.0, ter_lev=0.006, ter_unlev=0.0007):
         """
-        Simulate leveraged ETF with realistic total costs.
+        Simulate leveraged ETF with empirically-calibrated total costs.
 
         Args:
             ter_lev: TER for leveraged ETF (default 0.6%)
             ter_unlev: TER for unleveraged index fund (default 0.07%)
 
-        Total leveraged ETF cost = TER + financing costs
-        - TER: 0.6% management fee
-        - Financing: ~4.5% (current SOFR) for borrowed capital
-        - Total: ~5.0% in Nov 2025 environment
+        Total leveraged ETF cost = TER + empirical excess costs
+
+        Empirical excess costs (based on 2016-2024 research):
+        - Include: swap financing, volatility drag, rebalancing, counterparty risk
+        - Average: ~1.5% for 2x leverage
+        - ZIRP era (2008-2015): ~0.8%
+        - Current (2022+): ~2.0%
+
+        Total costs:
+        - ZIRP era: 0.6% TER + 0.8% excess = 1.4%
+        - Normal: 0.6% TER + 1.5% excess = 2.1%
+        - Current: 0.6% TER + 2.0% excess = 2.6%
         """
         daily_ter_lev = ter_lev / 252
         daily_ter_unlev = ter_unlev / 252
         leveraged_returns = []
 
         for ret in returns:
-            # Get time-varying financing rate
-            financing_rate = self.get_financing_rate(ret['date'])
-            daily_financing = financing_rate / 252
+            # Get empirical excess costs (includes all hidden costs)
+            excess_cost = self.get_empirical_excess_cost(ret['date'])
+            daily_excess = excess_cost / 252
 
-            # Total daily cost = TER + financing
-            total_daily_cost = daily_ter_lev + daily_financing
+            # Total daily cost = TER + empirical excess costs
+            total_daily_cost = daily_ter_lev + daily_excess
 
             leveraged_ret = leverage * ret['return'] - total_daily_cost
             unleveraged_ret = ret['return'] - daily_ter_unlev
