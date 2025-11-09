@@ -106,16 +106,24 @@ class PairwiseComparison:
             })
         return returns
 
-    def simulate_leveraged_etf(self, returns, leverage=2.0, ter=0.006):
-        """Simulate leveraged ETF"""
-        daily_ter = ter / 252
+    def simulate_leveraged_etf(self, returns, leverage=2.0, ter_lev=0.006, ter_unlev=0.0007):
+        """
+        Simulate leveraged ETF with realistic TERs.
+
+        Args:
+            ter_lev: TER for leveraged ETF (default 0.6%)
+            ter_unlev: TER for unleveraged index fund (default 0.07%)
+        """
+        daily_ter_lev = ter_lev / 252
+        daily_ter_unlev = ter_unlev / 252
         leveraged_returns = []
         for ret in returns:
-            leveraged_ret = leverage * ret['return'] - daily_ter
+            leveraged_ret = leverage * ret['return'] - daily_ter_lev
+            unleveraged_ret = ret['return'] - daily_ter_unlev
             leveraged_returns.append({
                 'date': ret['date'],
                 'lev_return': leveraged_ret,
-                'unlev_return': ret['return']
+                'unlev_return': unleveraged_ret
             })
         return leveraged_returns
 

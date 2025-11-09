@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
-Commit: a56a1d4a313c2260d75581a17e04c29868a9591b
-Timestamp: 2025-11-09 08:22:00 UTC
+Commit: 07a7e19adbdb9486fa771cfc39de3ba3facc7ea6
+Timestamp: 2025-11-09 09:31:54 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.016s
+Ran 26 tests in 0.008s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -85,11 +85,11 @@ IRR should correctly calculate negative returns. ... ok
 test_irr_with_real_monthly_investment_pattern (tests.test_financial_validation.TestIRRFinancialAccuracy)
 IRR for monthly investments should match expected range. ... ok
 test_2x_leverage_doubles_returns_in_simple_scenario (tests.test_financial_validation.TestLeveragedETFMechanics)
-2x leverage should approximately double returns in low-volatility uptrend. ... ok
+2x leverage should approximately double returns in low-volatility uptrend. ... ERROR
 test_ter_annual_impact_is_approximately_correct (tests.test_financial_validation.TestLeveragedETFMechanics)
-TER of 0.6% should cost roughly 0.6% annually in flat market. ... ok
+TER of 0.6% should cost roughly 0.6% annually in flat market. ... ERROR
 test_volatility_decay_occurs_in_oscillating_market (tests.test_financial_validation.TestLeveragedETFMechanics)
-Leveraged ETF should underperform in high-volatility flat market. ... ok
+Leveraged ETF should underperform in high-volatility flat market. ... ERROR
 test_leveraged_returns_have_higher_volatility (tests.test_financial_validation.TestStatisticalValidation)
 2x leveraged returns should have roughly 2x higher standard deviation. ... ok
 test_monthly_investment_makes_approximately_12_investments_per_year (tests.test_financial_validation.TestStatisticalValidation)
@@ -97,10 +97,37 @@ Monthly investment logic should invest roughly 12 times per year. ... ok
 test_percentile_calculations_are_monotonic (tests.test_financial_validation.TestStatisticalValidation)
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
+======================================================================
+ERROR: test_2x_leverage_doubles_returns_in_simple_scenario (tests.test_financial_validation.TestLeveragedETFMechanics)
+2x leverage should approximately double returns in low-volatility uptrend.
 ----------------------------------------------------------------------
-Ran 17 tests in 2.111s
+Traceback (most recent call last):
+  File "/home/runner/work/StockSimulator/StockSimulator/tests/../tests/../tests/test_financial_validation.py", line 304, in test_2x_leverage_doubles_returns_in_simple_scenario
+    leveraged_returns = analyzer.simulate_leveraged_etf(
+TypeError: PairwiseComparison.simulate_leveraged_etf() got an unexpected keyword argument 'ter'
 
-OK
+======================================================================
+ERROR: test_ter_annual_impact_is_approximately_correct (tests.test_financial_validation.TestLeveragedETFMechanics)
+TER of 0.6% should cost roughly 0.6% annually in flat market.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/StockSimulator/StockSimulator/tests/../tests/../tests/test_financial_validation.py", line 285, in test_ter_annual_impact_is_approximately_correct
+    leveraged_returns = analyzer.simulate_leveraged_etf(flat_returns, leverage=2.0, ter=0.006)
+TypeError: PairwiseComparison.simulate_leveraged_etf() got an unexpected keyword argument 'ter'
+
+======================================================================
+ERROR: test_volatility_decay_occurs_in_oscillating_market (tests.test_financial_validation.TestLeveragedETFMechanics)
+Leveraged ETF should underperform in high-volatility flat market.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/StockSimulator/StockSimulator/tests/../tests/../tests/test_financial_validation.py", line 340, in test_volatility_decay_occurs_in_oscillating_market
+    leveraged_returns = analyzer.simulate_leveraged_etf(
+TypeError: PairwiseComparison.simulate_leveraged_etf() got an unexpected keyword argument 'ter'
+
+----------------------------------------------------------------------
+Ran 17 tests in 2.140s
+
+FAILED (errors=3)
 ╔==============================================================================╗
 ║                    STOCKSIMULATOR COMPREHENSIVE TEST SUITE                   ║
 ╚==============================================================================╝
@@ -135,20 +162,20 @@ Return Percentiles (Annualized %):
 Strategy                       10th %       25th %       50th %       75th %       90th %      
 ------------------------------------------------------------------------------------------------------------------------
 Lump-Sum 2x Leveraged               -6.91%      -1.55%      19.87%      27.14%      31.52%
-Monthly Non-Leveraged                1.02%       7.30%      11.92%      15.16%      17.45%
-Gap (Lump 2x - Non-Lev)            -11.93%      -4.03%       8.62%      12.36%      15.42%
+Monthly Non-Leveraged                0.95%       7.23%      11.84%      15.08%      17.37%
+Gap (Lump 2x - Non-Lev)            -11.86%      -3.96%       8.69%      12.44%      15.50%
 
 Final Value Percentiles (from $30,000 invested):
 Strategy                       10th %          25th %          50th %          75th %          90th %         
 ------------------------------------------------------------------------------------------------------------------------
 Lump-Sum 2x Leveraged          $       20,973 $       27,741 $       74,263 $       99,725 $      118,119
-Monthly Non-Leveraged          $       30,259 $       35,359 $       39,586 $       42,822 $       45,250
+Monthly Non-Leveraged          $       30,207 $       35,298 $       39,511 $       42,740 $       45,164
 
 Worst Period for Lump-Sum 2x (biggest underperformance):
   Period: 2007-10 to 2012-10
   Lump-Sum 2x:  -6.91% ann. ($      20,973)
-  Monthly Non-Lev:  10.68% ann. ($      38,414)
-  Gap: -17.59% per year
+  Monthly Non-Lev:  10.61% ann. ($      38,344)
+  Gap: -17.51% per year
 
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -163,20 +190,20 @@ Return Percentiles (Annualized %):
 Strategy                       10th %       25th %       50th %       75th %       90th %      
 ------------------------------------------------------------------------------------------------------------------------
 Monthly 2x Leveraged                -2.94%      11.17%      22.10%      27.93%      33.27%
-Monthly Non-Leveraged                1.02%       7.30%      11.92%      15.16%      17.45%
-Gap (Monthly 2x - Non-Lev)          -2.67%       4.14%      10.05%      12.96%      15.58%
+Monthly Non-Leveraged                0.95%       7.23%      11.84%      15.08%      17.37%
+Gap (Monthly 2x - Non-Lev)          -2.60%       4.21%      10.13%      13.04%      15.67%
 
 Final Value Percentiles (from $30,000 invested):
 Strategy                       10th %          25th %          50th %          75th %          90th %         
 ------------------------------------------------------------------------------------------------------------------------
 Monthly 2x Leveraged           $       27,405 $       38,868 $       50,562 $       57,991 $       65,619
-Monthly Non-Leveraged          $       30,259 $       35,359 $       39,586 $       42,822 $       45,250
+Monthly Non-Leveraged          $       30,207 $       35,298 $       39,511 $       42,740 $       45,164
 
 Worst Period for Monthly 2x (biggest underperformance):
   Period: 2004-03 to 2009-03
   Monthly 2x: -20.96% ann. ($       9,095)
-  Monthly Non-Lev:  -9.32% ann. ($      18,080)
-  Gap: -11.64% per year
+  Monthly Non-Lev:  -9.36% ann. ($      18,048)
+  Gap: -11.61% per year
 
 
 
@@ -185,14 +212,14 @@ Worst Period for Monthly 2x (biggest underperformance):
 OVERALL SUMMARY
 ================================================================================
 Unit Tests:        26 tests (26 pass, 0 fail, 0 error)
-Validation Tests:  17 tests (17 pass, 0 fail, 0 error)
+Validation Tests:  17 tests (14 pass, 0 fail, 3 error)
 --------------------------------------------------------------------------------
-TOTAL:             43 tests (43 pass, 0 fail, 0 error)
-Success Rate:     100.0%
+TOTAL:             43 tests (40 pass, 0 fail, 3 error)
+Success Rate:     93.0%
 ================================================================================
 
-✅ ALL TESTS PASSED
+⚠️  TESTS FAILED - See details above
 
 ================================================
-✅ ALL TESTS PASSED
+❌ TESTS FAILED
 ================================================
