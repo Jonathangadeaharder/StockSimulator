@@ -106,19 +106,68 @@ class PairwiseComparison:
             })
         return returns
 
+    def get_financing_rate(self, date):
+        """
+        Get time-varying financing cost for leveraged ETFs.
+
+        Leveraged ETFs borrow capital to achieve 2x leverage, paying interest
+        on borrowed amounts. Rates track historical SOFR/LIBOR equivalents.
+
+        For 2x leverage, ~100% of portfolio is borrowed, so financing cost
+        equals the borrowing rate (typically SOFR + spread ~0.3%).
+
+        Historical rates:
+        - 1950-1979: ~4.5% (pre-Volcker)
+        - 1980-1989: ~9.0% (Volcker era)
+        - 1990-1999: ~5.0% (post-Volcker)
+        - 2000-2007: ~3.5% (dot-com era)
+        - 2008-2015: ~0.5% (ZIRP)
+        - 2016-2021: ~1.5% (recovery)
+        - 2022-2025: ~4.5% (inflation fighting)
+        """
+        year = date.year if hasattr(date, 'year') else date
+
+        if year < 1980:
+            return 0.045
+        elif year < 1990:
+            return 0.090
+        elif year < 2000:
+            return 0.050
+        elif year < 2008:
+            return 0.035
+        elif year < 2016:
+            return 0.005  # ZIRP era - very low costs
+        elif year < 2022:
+            return 0.015
+        else:
+            return 0.045  # Current environment
+
     def simulate_leveraged_etf(self, returns, leverage=2.0, ter_lev=0.006, ter_unlev=0.0007):
         """
-        Simulate leveraged ETF with realistic TERs.
+        Simulate leveraged ETF with realistic total costs.
 
         Args:
             ter_lev: TER for leveraged ETF (default 0.6%)
             ter_unlev: TER for unleveraged index fund (default 0.07%)
+
+        Total leveraged ETF cost = TER + financing costs
+        - TER: 0.6% management fee
+        - Financing: ~4.5% (current SOFR) for borrowed capital
+        - Total: ~5.0% in Nov 2025 environment
         """
         daily_ter_lev = ter_lev / 252
         daily_ter_unlev = ter_unlev / 252
         leveraged_returns = []
+
         for ret in returns:
-            leveraged_ret = leverage * ret['return'] - daily_ter_lev
+            # Get time-varying financing rate
+            financing_rate = self.get_financing_rate(ret['date'])
+            daily_financing = financing_rate / 252
+
+            # Total daily cost = TER + financing
+            total_daily_cost = daily_ter_lev + daily_financing
+
+            leveraged_ret = leverage * ret['return'] - total_daily_cost
             unleveraged_ret = ret['return'] - daily_ter_unlev
             leveraged_returns.append({
                 'date': ret['date'],
