@@ -471,61 +471,62 @@ class PairwiseComparison:
         return summary
 
 
-# Analyze all indices
-indices = [
-    PairwiseComparison("S&P 500", "sp500_stooq_daily.csv", 'Date', 'Close', 1950),
-    PairwiseComparison("DJIA", "djia_stooq_daily.csv", 'Date', 'Close', 1950),
-    PairwiseComparison("NASDAQ", "nasdaq_fred.csv", 'observation_date', 'NASDAQCOM', 1971),
-    PairwiseComparison("Nikkei 225", "nikkei225_fred.csv", 'observation_date', 'NIKKEI225', 1950),
-]
-
-print()
-print("╔" + "=" * 118 + "╗")
-print("║" + " " * 40 + "PAIRWISE COMPARISON ANALYSIS" + " " * 50 + "║")
-print("║" + " " * 25 + "Head-to-Head: Leveraged vs Non-Leveraged Strategies" + " " * 42 + "║")
-print("╚" + "=" * 118 + "╝")
-print()
-
-all_results = {}
-
-for idx_analyzer in indices:
-    try:
-        results = idx_analyzer.analyze(timeframes=[5, 10, 15], monthly_amount=500)
-        all_results[idx_analyzer.name] = results
-        print()
-    except Exception as e:
-        print(f"Error analyzing {idx_analyzer.name}: {e}\n")
-
-# Summary tables
-print()
-print("=" * 120)
-print("SUMMARY: WIN RATES BY COMPARISON")
-print("=" * 120)
-print()
-
-for comparison in ["lump_vs_unlev", "monthly_vs_unlev"]:
-    if comparison == "lump_vs_unlev":
-        print("COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged")
-    else:
-        print("COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged")
-
-    print("-" * 120)
-
-    for years in [5, 10, 15]:
-        print(f"\n{years}-YEAR PERIODS:")
-        print(f"{'Index':<20} {'Leveraged Win Rate':<30} {'Non-Leveraged Win Rate':<30}")
-        print("-" * 120)
-
-        for idx_name, results in all_results.items():
-            key = f"{years}_{comparison}"
-            if key in results:
-                r = results[key]
-                lev_rate = r['win_rate']
-                unlev_rate = 100 - lev_rate
-                print(f"{idx_name:<20} {lev_rate:>8.1f}%                     {unlev_rate:>8.1f}%")
+if __name__ == '__main__':
+    # Analyze all indices
+    indices = [
+        PairwiseComparison("S&P 500", "sp500_stooq_daily.csv", 'Date', 'Close', 1950),
+        PairwiseComparison("DJIA", "djia_stooq_daily.csv", 'Date', 'Close', 1950),
+        PairwiseComparison("NASDAQ", "nasdaq_fred.csv", 'observation_date', 'NASDAQCOM', 1971),
+        PairwiseComparison("Nikkei 225", "nikkei225_fred.csv", 'observation_date', 'NIKKEI225', 1950),
+    ]
 
     print()
+    print("╔" + "=" * 118 + "╗")
+    print("║" + " " * 40 + "PAIRWISE COMPARISON ANALYSIS" + " " * 50 + "║")
+    print("║" + " " * 25 + "Head-to-Head: Leveraged vs Non-Leveraged Strategies" + " " * 42 + "║")
+    print("╚" + "=" * 118 + "╝")
+    print()
+
+    all_results = {}
+
+    for idx_analyzer in indices:
+        try:
+            results = idx_analyzer.analyze(timeframes=[5, 10, 15], monthly_amount=500)
+            all_results[idx_analyzer.name] = results
+            print()
+        except Exception as e:
+            print(f"Error analyzing {idx_analyzer.name}: {e}\n")
+
+    # Summary tables
+    print()
+    print("=" * 120)
+    print("SUMMARY: WIN RATES BY COMPARISON")
     print("=" * 120)
     print()
 
-print("=" * 120)
+    for comparison in ["lump_vs_unlev", "monthly_vs_unlev"]:
+        if comparison == "lump_vs_unlev":
+            print("COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged")
+        else:
+            print("COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged")
+
+        print("-" * 120)
+
+        for years in [5, 10, 15]:
+            print(f"\n{years}-YEAR PERIODS:")
+            print(f"{'Index':<20} {'Leveraged Win Rate':<30} {'Non-Leveraged Win Rate':<30}")
+            print("-" * 120)
+
+            for idx_name, results in all_results.items():
+                key = f"{years}_{comparison}"
+                if key in results:
+                    r = results[key]
+                    lev_rate = r['win_rate']
+                    unlev_rate = 100 - lev_rate
+                    print(f"{idx_name:<20} {lev_rate:>8.1f}%                     {unlev_rate:>8.1f}%")
+
+        print()
+        print("=" * 120)
+        print()
+
+    print("=" * 120)

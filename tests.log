@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: claude/research-historical-index-data-011CUuLtr9WFtdiPPLT4oM6n
-Commit: db8a6b71bb7fed5f961b94a7a38a960dfd0b211b
-Timestamp: 2025-11-08 22:07:41 UTC
+Commit: ddb52bf77f9e0ccd153e496bbe7848efc78814a9
+Timestamp: 2025-11-09 02:20:58 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,80 +59,48 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.023s
+Ran 26 tests in 0.017s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
-Complete analysis pipeline should run on real data. ... 
-╔======================================================================================================================╗
-║                                        PAIRWISE COMPARISON ANALYSIS                                                  ║
-║                         Head-to-Head: Leveraged vs Non-Leveraged Strategies                                          ║
-╚======================================================================================================================╝
+Complete analysis pipeline should run on real data. ... ok
+test_sp500_data_loads_successfully (tests.test_financial_validation.TestRealDataIntegration)
+Real S&P 500 data should load without errors. ... ok
+test_sp500_returns_calculation_produces_valid_results (tests.test_financial_validation.TestRealDataIntegration)
+S&P 500 returns should be within reasonable bounds. ... ok
+test_2008_financial_crisis_shows_expected_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
+2008 crash should show significant loss (30-70%) for S&P 500 unleveraged. ... ok
+test_2x_leveraged_amplifies_2008_crash_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
+2x leveraged ETF should lose more than 2x during sustained crash. ... ok
+test_black_monday_1987_single_day_crash (tests.test_financial_validation.TestHistoricalCrashScenarios)
+Black Monday (Oct 19, 1987) should show ~20% single-day loss. ... ok
+test_dot_com_bubble_burst_2000_2002 (tests.test_financial_validation.TestHistoricalCrashScenarios)
+Dot-com crash (2000-2002) should show significant losses. ... ok
+test_irr_handles_irregular_timing (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should work with non-standard investment intervals. ... ok
+test_irr_matches_simple_annual_return (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should match simple return for single-period investment. ... ok
+test_irr_negative_return_accuracy (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR should correctly calculate negative returns. ... ok
+test_irr_with_real_monthly_investment_pattern (tests.test_financial_validation.TestIRRFinancialAccuracy)
+IRR for monthly investments should match expected range. ... ok
+test_2x_leverage_doubles_returns_in_simple_scenario (tests.test_financial_validation.TestLeveragedETFMechanics)
+2x leverage should approximately double returns in low-volatility uptrend. ... ok
+test_ter_annual_impact_is_approximately_correct (tests.test_financial_validation.TestLeveragedETFMechanics)
+TER of 0.6% should cost roughly 0.6% annually in flat market. ... ok
+test_volatility_decay_occurs_in_oscillating_market (tests.test_financial_validation.TestLeveragedETFMechanics)
+Leveraged ETF should underperform in high-volatility flat market. ... ok
+test_leveraged_returns_have_higher_volatility (tests.test_financial_validation.TestStatisticalValidation)
+2x leveraged returns should have roughly 2x higher standard deviation. ... ok
+test_monthly_investment_makes_approximately_12_investments_per_year (tests.test_financial_validation.TestStatisticalValidation)
+Monthly investment logic should invest roughly 12 times per year. ... ok
+test_percentile_calculations_are_monotonic (tests.test_financial_validation.TestStatisticalValidation)
+Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
-========================================================================================================================
-PAIRWISE COMPARISON ANALYSIS: S&P 500
-========================================================================================================================
+----------------------------------------------------------------------
+Ran 17 tests in 2.113s
 
-Error analyzing S&P 500: [Errno 2] No such file or directory: 'sp500_stooq_daily.csv'
-
-========================================================================================================================
-PAIRWISE COMPARISON ANALYSIS: DJIA
-========================================================================================================================
-
-Error analyzing DJIA: [Errno 2] No such file or directory: 'djia_stooq_daily.csv'
-
-========================================================================================================================
-PAIRWISE COMPARISON ANALYSIS: NASDAQ
-========================================================================================================================
-
-Error analyzing NASDAQ: [Errno 2] No such file or directory: 'nasdaq_fred.csv'
-
-========================================================================================================================
-PAIRWISE COMPARISON ANALYSIS: Nikkei 225
-========================================================================================================================
-
-Error analyzing Nikkei 225: [Errno 2] No such file or directory: 'nikkei225_fred.csv'
-
-
-========================================================================================================================
-SUMMARY: WIN RATES BY COMPARISON
-========================================================================================================================
-
-COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged
-------------------------------------------------------------------------------------------------------------------------
-
-5-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-10-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-15-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-========================================================================================================================
-
-COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged
-------------------------------------------------------------------------------------------------------------------------
-
-5-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-10-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-15-YEAR PERIODS:
-Index                Leveraged Win Rate             Non-Leveraged Win Rate        
-------------------------------------------------------------------------------------------------------------------------
-
-========================================================================================================================
-
-========================================================================================================================
+OK
 ╔==============================================================================╗
 ║                    STOCKSIMULATOR COMPREHENSIVE TEST SUITE                   ║
 ╚==============================================================================╝
@@ -185,44 +153,6 @@ Worst Period for Lump-Sum 2x (biggest underperformance):
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 COMPARISON 2: Monthly $500 (2x Leveraged) vs Monthly $500 (Non-Leveraged)
-ok
-test_sp500_data_loads_successfully (tests.test_financial_validation.TestRealDataIntegration)
-Real S&P 500 data should load without errors. ... ok
-test_sp500_returns_calculation_produces_valid_results (tests.test_financial_validation.TestRealDataIntegration)
-S&P 500 returns should be within reasonable bounds. ... ok
-test_2008_financial_crisis_shows_expected_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
-2008 crash should show significant loss (30-70%) for S&P 500 unleveraged. ... ok
-test_2x_leveraged_amplifies_2008_crash_losses (tests.test_financial_validation.TestHistoricalCrashScenarios)
-2x leveraged ETF should lose more than 2x during sustained crash. ... ok
-test_black_monday_1987_single_day_crash (tests.test_financial_validation.TestHistoricalCrashScenarios)
-Black Monday (Oct 19, 1987) should show ~20% single-day loss. ... ok
-test_dot_com_bubble_burst_2000_2002 (tests.test_financial_validation.TestHistoricalCrashScenarios)
-Dot-com crash (2000-2002) should show significant losses. ... ok
-test_irr_handles_irregular_timing (tests.test_financial_validation.TestIRRFinancialAccuracy)
-IRR should work with non-standard investment intervals. ... ok
-test_irr_matches_simple_annual_return (tests.test_financial_validation.TestIRRFinancialAccuracy)
-IRR should match simple return for single-period investment. ... ok
-test_irr_negative_return_accuracy (tests.test_financial_validation.TestIRRFinancialAccuracy)
-IRR should correctly calculate negative returns. ... ok
-test_irr_with_real_monthly_investment_pattern (tests.test_financial_validation.TestIRRFinancialAccuracy)
-IRR for monthly investments should match expected range. ... ok
-test_2x_leverage_doubles_returns_in_simple_scenario (tests.test_financial_validation.TestLeveragedETFMechanics)
-2x leverage should approximately double returns in low-volatility uptrend. ... ok
-test_ter_annual_impact_is_approximately_correct (tests.test_financial_validation.TestLeveragedETFMechanics)
-TER of 0.6% should cost roughly 0.6% annually in flat market. ... ok
-test_volatility_decay_occurs_in_oscillating_market (tests.test_financial_validation.TestLeveragedETFMechanics)
-Leveraged ETF should underperform in high-volatility flat market. ... ok
-test_leveraged_returns_have_higher_volatility (tests.test_financial_validation.TestStatisticalValidation)
-2x leveraged returns should have roughly 2x higher standard deviation. ... ok
-test_monthly_investment_makes_approximately_12_investments_per_year (tests.test_financial_validation.TestStatisticalValidation)
-Monthly investment logic should invest roughly 12 times per year. ... ok
-test_percentile_calculations_are_monotonic (tests.test_financial_validation.TestStatisticalValidation)
-Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
-
-----------------------------------------------------------------------
-Ran 17 tests in 2.160s
-
-OK
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 Win Statistics (250 periods analyzed):
