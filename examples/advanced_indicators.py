@@ -8,7 +8,7 @@ import sys
 import os
 
 # Add src to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 from stocksimulator.data import load_from_csv
 from stocksimulator.indicators import (
@@ -27,7 +27,11 @@ def main():
 
     # Load data
     print("Loading market data...")
-    spy_data = load_from_csv('sp500_stooq_daily.csv', 'SPY', 'historical_data')
+    # Try both paths (running from root or examples dir)
+    try:
+        spy_data = load_from_csv('sp500_stooq_daily.csv', 'SPY', 'historical_data')
+    except FileNotFoundError:
+        spy_data = load_from_csv('sp500_stooq_daily.csv', 'SPY', '../historical_data')
     print(f"✓ Loaded {len(spy_data.data)} data points")
     print()
 
@@ -155,28 +159,12 @@ def main():
     print("Using multiple indicators together can improve signal quality.")
     print()
 
-    # Get signals from classic indicators
-    macd = MACD()
-    macd_result = macd.calculate([p.close for p in recent_data])
-    macd_signal = 'bullish' if macd_result.histogram > 0 else 'bearish'
-
-    rsi = RSI()
-    rsi_value = rsi.calculate([p.close for p in recent_data])
-    rsi_signal = 'bullish' if 30 < rsi_value < 70 else ('overbought' if rsi_value >= 70 else 'oversold')
-
-    bb = BollingerBands()
-    bb_result = bb.calculate([p.close for p in recent_data])
-    bb_signal = bb.get_signal([p.close for p in recent_data])
-
-    # Tally signals
+    # Tally signals from advanced indicators
     signals = {
         'Ichimoku': ich_signal,
         'VWAP': vwap_signal,
         'Supertrend': st_signal,
         'Donchian': dc_signal,
-        'MACD': macd_signal,
-        'RSI': rsi_signal,
-        'Bollinger': bb_signal
     }
 
     print("Indicator Consensus:")
