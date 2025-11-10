@@ -74,6 +74,7 @@ class AlphaVantageDownloader(DataDownloader):
 
         # Build URL
         import urllib.request
+        import urllib.error
         import json
 
         url = (

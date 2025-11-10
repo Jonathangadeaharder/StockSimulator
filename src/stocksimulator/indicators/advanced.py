@@ -45,13 +45,12 @@ class IchimokuCloud:
         self.kijun_period = kijun_period
         self.senkou_span_b_period = senkou_span_b_period
 
-    def calculate(self, data: List[OHLCV], displacement: int = 26) -> IchimokuResult:
+    def calculate(self, data: List[OHLCV]) -> IchimokuResult:
         """
         Calculate Ichimoku Cloud components.
 
         Args:
             data: List of OHLCV data
-            displacement: Cloud displacement (default: 26)
 
         Returns:
             IchimokuResult
