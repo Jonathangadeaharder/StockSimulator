@@ -47,6 +47,16 @@ class BacktestResult:
         years = days / 365.25
         self.annualized_return = ((final_value / initial_value) ** (1 / years) - 1) * 100 if years > 0 else 0
 
+    @property
+    def equity_curve(self):
+        """Alias for portfolio_values for backward compatibility."""
+        return self.portfolio_values
+
+    @property
+    def trades(self):
+        """Alias for transactions for backward compatibility."""
+        return self.transactions
+
     def get_performance_summary(self) -> Dict:
         """Get summary of performance metrics."""
         risk_calc = RiskCalculator()

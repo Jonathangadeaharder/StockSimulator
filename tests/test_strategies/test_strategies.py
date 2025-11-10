@@ -31,13 +31,12 @@ class TestDCAStrategies(unittest.TestCase):
 
     def test_dca_strategy_initialization(self):
         """DCA strategy should initialize correctly."""
-        strategy = DCAStrategy(symbols=['SPY'], equal_weight=True)
+        strategy = DCAStrategy(target_allocation={'SPY': 100.0})
         self.assertIsNotNone(strategy)
-        self.assertEqual(strategy.symbols, ['SPY'])
 
     def test_dca_produces_valid_allocation(self):
         """DCA should produce valid allocation."""
-        strategy = DCAStrategy(symbols=['SPY'])
+        strategy = DCAStrategy(target_allocation={'SPY': 100.0})
 
         # Get allocation
         allocation = strategy(
@@ -53,7 +52,7 @@ class TestDCAStrategies(unittest.TestCase):
 
     def test_fixed_allocation_strategy(self):
         """Fixed allocation should maintain target weights."""
-        strategy = FixedAllocationStrategy(allocation={'SPY': 100.0})
+        strategy = FixedAllocationStrategy(target_allocation={'SPY': 100.0})
 
         allocation = strategy(
             current_date=self.spy_data.data[-1].date,
@@ -196,7 +195,7 @@ class TestStrategyIntegration(unittest.TestCase):
         start_date = date(end_date.year - 2, end_date.month, end_date.day)
 
         strategies = {
-            'DCA': DCAStrategy(symbols=['SPY']),
+            'DCA': DCAStrategy(target_allocation={'SPY': 100.0}),
             'Momentum': MomentumStrategy(lookback_days=126, top_n=1),
         }
 
@@ -216,12 +215,12 @@ class TestStrategyIntegration(unittest.TestCase):
 
         # All should have positive final values
         for name, result in results.items():
-            final_value = result.equity_curve[-1].value
+            final_value = result.equity_curve[-1]['total_value']
             self.assertGreater(final_value, 0, f"{name} should have positive final value")
 
     def test_strategy_with_transaction_costs(self):
         """Strategies should work with transaction costs."""
-        strategy = DCAStrategy(symbols=['SPY'])
+        strategy = DCAStrategy(target_allocation={'SPY': 100.0})
         backtester = Backtester(initial_cash=100000.0, transaction_cost_bps=10.0)
 
         end_date = self.spy_data.data[-1].date
