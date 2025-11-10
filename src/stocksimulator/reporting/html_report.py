@@ -4,6 +4,7 @@ HTML Report Generator
 Generate comprehensive HTML performance reports.
 """
 
+import os
 from typing import Dict, List, Optional
 from datetime import datetime
 
