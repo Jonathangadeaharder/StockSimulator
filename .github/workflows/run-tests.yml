@@ -81,23 +81,106 @@ jobs:
             echo "No changes to commit - tests.log unchanged"
           else
             if [ "${{ github.event_name }}" == "push" ]; then
-              # For push events, amend the last commit
-              echo "Amending last commit with test results..."
-              git commit --amend --no-edit
-
+              # For push events, handle with retries to avoid race conditions
               # Only force-push if not on protected branches
               if [ "${{ github.ref_name }}" != "main" ] && [ "${{ github.ref_name }}" != "master" ]; then
-                git push --force-with-lease origin ${{ github.ref_name }}
-                echo "✅ Test results committed and pushed (amended)"
+                echo "Amending last commit with test results..."
+                git commit --amend --no-edit
+                
+                # Retry logic to handle race conditions
+                MAX_RETRIES=3
+                RETRY_COUNT=0
+                while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                  if git push --force-with-lease origin ${{ github.ref_name }}; then
+                    echo "✅ Test results committed and pushed (amended)"
+                    break
+                  else
+                    RETRY_COUNT=$((RETRY_COUNT + 1))
+                    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                      echo "⚠️ Push failed, retrying ($RETRY_COUNT/$MAX_RETRIES)..."
+                      # Fetch latest changes and try to rebase
+                      git fetch origin ${{ github.ref_name }}
+                      # Reset to staged state and re-amend on top of latest
+                      git reset --soft origin/${{ github.ref_name }}
+                      git add tests.log
+                      git commit --amend --no-edit || echo "Commit already exists"
+                      sleep 2
+                    else
+                      echo "❌ Failed to push after $MAX_RETRIES attempts"
+                      echo "This is likely due to concurrent pushes. Test results are still valid."
+                      exit 0  # Don't fail the workflow, tests passed
+                    fi
+                  fi
+                done
               else
                 echo "⚠️ Skipping force-push to protected branch (${{ github.ref_name }})"
+                echo "Creating new commit instead..."
+                
+                # Pull latest changes to avoid race condition
+                git fetch origin ${{ github.ref_name }}
+                git rebase origin/${{ github.ref_name }} || {
+                  echo "Rebase failed, using merge strategy..."
+                  git rebase --abort
+                  git merge origin/${{ github.ref_name }} -m "Merge latest changes"
+                }
+                
+                git commit -m "Add test execution log [skip ci]"
+                
+                # Retry push with latest changes
+                MAX_RETRIES=3
+                RETRY_COUNT=0
+                while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                  if git push origin ${{ github.ref_name }}; then
+                    echo "✅ Test results committed and pushed (new commit)"
+                    break
+                  else
+                    RETRY_COUNT=$((RETRY_COUNT + 1))
+                    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                      echo "⚠️ Push failed, retrying ($RETRY_COUNT/$MAX_RETRIES)..."
+                      git pull --rebase origin ${{ github.ref_name }}
+                      sleep 2
+                    else
+                      echo "❌ Failed to push after $MAX_RETRIES attempts"
+                      echo "This is likely due to concurrent pushes. Test results are still valid."
+                      exit 0  # Don't fail the workflow, tests passed
+                    fi
+                  fi
+                done
               fi
             else
-              # For pull requests, create a new commit
+              # For pull requests, create a new commit with retry logic
               echo "Creating new commit with test results..."
+              
+              # Fetch and rebase to get latest PR changes
+              git fetch origin ${{ github.head_ref }}
+              git rebase origin/${{ github.head_ref }} || {
+                echo "Rebase failed, using merge strategy..."
+                git rebase --abort
+                git merge origin/${{ github.head_ref }} -m "Merge latest PR changes"
+              }
+              
               git commit -m "Add test execution log [skip ci]"
-              git push origin HEAD:${{ github.head_ref }}
-              echo "✅ Test results committed and pushed (new commit)"
+              
+              # Retry push
+              MAX_RETRIES=3
+              RETRY_COUNT=0
+              while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                if git push origin HEAD:${{ github.head_ref }}; then
+                  echo "✅ Test results committed and pushed (new commit)"
+                  break
+                else
+                  RETRY_COUNT=$((RETRY_COUNT + 1))
+                  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                    echo "⚠️ Push failed, retrying ($RETRY_COUNT/$MAX_RETRIES)..."
+                    git pull --rebase origin ${{ github.head_ref }}
+                    sleep 2
+                  else
+                    echo "❌ Failed to push after $MAX_RETRIES attempts"
+                    echo "This is likely due to concurrent pushes. Test results are still valid."
+                    exit 0  # Don't fail the workflow, tests passed
+                  fi
+                fi
+              done
             fi
           fi
 

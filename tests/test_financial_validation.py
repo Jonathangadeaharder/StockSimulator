@@ -228,7 +228,6 @@ class TestIRRFinancialAccuracy(unittest.TestCase):
             dates.append(start_date + timedelta(days=month*30))
             cash_flows.append(-500)
 
-        # Final value with 8% return
         # With dollar-cost averaging, final value is slightly different
         # Approximate: $6250 (8% on average investment time)
         dates.append(start_date + timedelta(days=365))
@@ -276,14 +275,15 @@ class TestLeveragedETFMechanics(unittest.TestCase):
     """Validate leveraged ETF simulation mechanics."""
 
     def test_ter_annual_impact_is_approximately_correct(self):
-        """TER of 0.6% should cost roughly 0.6% annually in flat market."""
+        """Total costs (TER + empirical excess costs) should be realistic in flat market."""
         # Simulate 252 trading days with 0% daily returns
-        # Expected: lose ~0.6% due to TER
+        # Expected: Total cost = TER (0.6%) + empirical excess costs (~1.5-2.0%)
+        # Total: ~2.1-2.6% per year depending on market regime
 
         flat_returns = [{'date': datetime.now(), 'return': 0.0} for _ in range(252)]
 
         analyzer = PairwiseComparison("Test", "dummy.csv", 'Date', 'Close', 1950)
-        leveraged_returns = analyzer.simulate_leveraged_etf(flat_returns, leverage=2.0, ter=0.006)
+        leveraged_returns = analyzer.simulate_leveraged_etf(flat_returns, leverage=2.0, ter_lev=0.006)
 
         # Compound returns
         cumulative = 1.0
@@ -292,9 +292,10 @@ class TestLeveragedETFMechanics(unittest.TestCase):
 
         annual_cost = (1 - cumulative) * 100
 
-        # Should lose approximately 0.6% (might be slightly less due to compounding)
-        self.assertGreater(annual_cost, 0.5, "TER impact too small")
-        self.assertLess(annual_cost, 0.7, "TER impact too large")
+        # Total costs should be realistic (TER + excess costs)
+        # Range: 1.4% (ZIRP era) to 2.6% (current)
+        self.assertGreater(annual_cost, 1.0, "Total cost too small - missing excess costs")
+        self.assertLess(annual_cost, 3.0, "Total cost too large - unrealistic")
 
     def test_2x_leverage_doubles_returns_in_simple_scenario(self):
         """2x leverage should approximately double returns in low-volatility uptrend."""
@@ -305,7 +306,7 @@ class TestLeveragedETFMechanics(unittest.TestCase):
         leveraged_returns = analyzer.simulate_leveraged_etf(
             simple_returns,
             leverage=2.0,
-            ter=0.0  # No TER for clean test
+            ter_lev=0.0  # No TER for clean test
         )
 
         # Unleveraged: (1.01)^5 = ~1.051
@@ -341,7 +342,7 @@ class TestLeveragedETFMechanics(unittest.TestCase):
         leveraged_returns = analyzer.simulate_leveraged_etf(
             oscillating_returns,
             leverage=2.0,
-            ter=0.0  # Exclude TER to isolate volatility decay
+            ter_lev=0.0  # Exclude TER to isolate volatility decay
         )
 
         # Calculate cumulative returns

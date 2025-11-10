@@ -1,0 +1,5 @@
+# Core dependencies for StockSimulator
+# Python 3.8+
+
+# No external dependencies for core analysis
+# All calculations use pure Python for maximum portability and reproducibility

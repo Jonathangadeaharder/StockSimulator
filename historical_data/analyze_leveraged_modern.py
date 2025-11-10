@@ -192,8 +192,10 @@ worst_end_idx = next(i for i, r in enumerate(leveraged_returns)
 worst_period_returns = leveraged_returns[worst_start_idx:worst_end_idx+1]
 
 returns_only = [r['unleveraged_return'] for r in worst_period_returns]
-mean_return = sum(returns_only) / len(returns_only)
-variance = sum((r - mean_return) ** 2 for r in returns_only) / len(returns_only)
+n = len(returns_only)
+mean_return = sum(returns_only) / n
+# Use sample variance (n-1) for unbiased estimator
+variance = sum((r - mean_return) ** 2 for r in returns_only) / (n - 1) if n > 1 else 0
 volatility = math.sqrt(variance) * math.sqrt(12) * 100
 
 neg_months = sum(1 for r in worst_period_returns if r['unleveraged_return'] < 0)
