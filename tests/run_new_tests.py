@@ -32,6 +32,9 @@ def run_tests():
         os.path.join(script_dir, 'test_data'),
         os.path.join(script_dir, 'test_strategies'),
         os.path.join(script_dir, 'test_indicators'),
+        os.path.join(script_dir, 'test_optimization'),
+        os.path.join(script_dir, 'test_tax'),
+        os.path.join(script_dir, 'test_simulation'),
     ]
 
     total_tests = 0
