@@ -170,9 +170,11 @@ def calculate_volatility(returns_list, window_months=12):
         window = returns_list[i-window_months:i]
         returns = [r['return'] for r in window]
 
-        # Calculate standard deviation
-        mean = sum(returns) / len(returns)
-        variance = sum((r - mean) ** 2 for r in returns) / len(returns)
+        # Calculate standard deviation (using sample variance)
+        n = len(returns)
+        mean = sum(returns) / n
+        # Use sample variance (n-1) for unbiased estimator
+        variance = sum((r - mean) ** 2 for r in returns) / (n - 1) if n > 1 else 0
         std_dev = math.sqrt(variance)
 
         # Annualize (monthly to annual)
@@ -279,8 +281,10 @@ worst_period_returns = leveraged_returns[worst_start_idx:worst_end_idx+1]
 # Calculate volatility for this period
 if len(worst_period_returns) >= 12:
     returns_only = [r['unleveraged_return'] for r in worst_period_returns]
-    mean_return = sum(returns_only) / len(returns_only)
-    variance = sum((r - mean_return) ** 2 for r in returns_only) / len(returns_only)
+    n = len(returns_only)
+    mean_return = sum(returns_only) / n
+    # Use sample variance (n-1) for unbiased estimator
+    variance = sum((r - mean_return) ** 2 for r in returns_only) / (n - 1) if n > 1 else 0
     volatility = math.sqrt(variance) * math.sqrt(12) * 100  # Annualized
 
     print(f"Market Characteristics During This Period:")

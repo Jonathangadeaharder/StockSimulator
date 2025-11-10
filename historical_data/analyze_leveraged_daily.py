@@ -151,8 +151,10 @@ def calculate_volatility(returns, window):
         return 0
 
     rets = [r['unlev_return'] for r in window]
-    mean = sum(rets) / len(rets)
-    variance = sum((r - mean) ** 2 for r in rets) / len(rets)
+    n = len(rets)
+    mean = sum(rets) / n
+    # Use sample variance (n-1) for unbiased estimator
+    variance = sum((r - mean) ** 2 for r in rets) / (n - 1) if n > 1 else 0
     daily_vol = math.sqrt(variance)
     annual_vol = daily_vol * math.sqrt(252)  # Annualize
     return annual_vol * 100

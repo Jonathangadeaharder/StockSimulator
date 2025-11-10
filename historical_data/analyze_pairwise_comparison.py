@@ -106,16 +106,83 @@ class PairwiseComparison:
             })
         return returns
 
-    def simulate_leveraged_etf(self, returns, leverage=2.0, ter=0.006):
-        """Simulate leveraged ETF"""
-        daily_ter = ter / 252
+    def get_empirical_excess_cost(self, date):
+        """
+        Get empirical excess costs for leveraged ETFs based on research.
+
+        Based on empirical studies (2016-2024):
+        - Average excess cost: ~1.5% per 100% leverage (beyond TER)
+        - ZIRP era (2008-2015): Lower costs (~0.8-1.0%)
+        - Normal rates (1990-2007): ~1.2-1.5%
+        - High rates (1980s, 2022+): ~1.8-2.5%
+
+        Sources:
+        - mdickens.me research (2016-2024): 1.43% average excess cost
+        - Xtrackers S&P 500 2x TD (2011-2024): 1.15% average
+        - etf.com study: ~1.5% per 100% leverage
+
+        These costs include:
+        - Swap financing costs
+        - Volatility drag from daily rebalancing
+        - Transaction costs for rebalancing
+        - Counterparty risk premiums
+        """
+        year = date.year if hasattr(date, 'year') else date
+
+        if year < 1980:
+            return 0.015  # Pre-modern ETFs, conservative estimate
+        elif year < 1990:
+            return 0.025  # Volcker era - high rates = high costs
+        elif year < 2000:
+            return 0.015  # Moderate rates
+        elif year < 2008:
+            return 0.012  # Moderate rates
+        elif year < 2016:
+            return 0.008  # ZIRP era - lowest costs
+        elif year < 2022:
+            return 0.012  # Recovery era
+        else:
+            return 0.020  # Current high-rate environment
+
+    def simulate_leveraged_etf(self, returns, leverage=2.0, ter_lev=0.006, ter_unlev=0.0007):
+        """
+        Simulate leveraged ETF with empirically-calibrated total costs.
+
+        Args:
+            ter_lev: TER for leveraged ETF (default 0.6%)
+            ter_unlev: TER for unleveraged index fund (default 0.07%)
+
+        Total leveraged ETF cost = TER + empirical excess costs
+
+        Empirical excess costs (based on 2016-2024 research):
+        - Include: swap financing, volatility drag, rebalancing, counterparty risk
+        - Average: ~1.5% for 2x leverage
+        - ZIRP era (2008-2015): ~0.8%
+        - Current (2022+): ~2.0%
+
+        Total costs:
+        - ZIRP era: 0.6% TER + 0.8% excess = 1.4%
+        - Normal: 0.6% TER + 1.5% excess = 2.1%
+        - Current: 0.6% TER + 2.0% excess = 2.6%
+        """
+        daily_ter_lev = ter_lev / 252
+        daily_ter_unlev = ter_unlev / 252
         leveraged_returns = []
+
         for ret in returns:
-            leveraged_ret = leverage * ret['return'] - daily_ter
+            # Get empirical excess costs (includes all hidden costs)
+            excess_cost = self.get_empirical_excess_cost(ret['date'])
+            daily_excess = excess_cost / 252
+
+            # Total daily cost = TER + empirical excess costs
+            total_daily_cost = daily_ter_lev + daily_excess
+
+            leveraged_ret = leverage * ret['return'] - total_daily_cost
+            unleveraged_ret = ret['return'] - daily_ter_unlev
             leveraged_returns.append({
                 'date': ret['date'],
                 'lev_return': leveraged_ret,
-                'unlev_return': ret['return']
+                'unlev_return': unleveraged_ret
             })
         return leveraged_returns
 
@@ -471,61 +538,62 @@ class PairwiseComparison:
         return summary
 
 
-# Analyze all indices
-indices = [
-    PairwiseComparison("S&P 500", "sp500_stooq_daily.csv", 'Date', 'Close', 1950),
-    PairwiseComparison("DJIA", "djia_stooq_daily.csv", 'Date', 'Close', 1950),
-    PairwiseComparison("NASDAQ", "nasdaq_fred.csv", 'observation_date', 'NASDAQCOM', 1971),
-    PairwiseComparison("Nikkei 225", "nikkei225_fred.csv", 'observation_date', 'NIKKEI225', 1950),
-]
-
-print()
-print("╔" + "=" * 118 + "╗")
-print("║" + " " * 40 + "PAIRWISE COMPARISON ANALYSIS" + " " * 50 + "║")
-print("║" + " " * 25 + "Head-to-Head: Leveraged vs Non-Leveraged Strategies" + " " * 42 + "║")
-print("╚" + "=" * 118 + "╝")
-print()
-
-all_results = {}
-
-for idx_analyzer in indices:
-    try:
-        results = idx_analyzer.analyze(timeframes=[5, 10, 15], monthly_amount=500)
-        all_results[idx_analyzer.name] = results
-        print()
-    except Exception as e:
-        print(f"Error analyzing {idx_analyzer.name}: {e}\n")
-
-# Summary tables
-print()
-print("=" * 120)
-print("SUMMARY: WIN RATES BY COMPARISON")
-print("=" * 120)
-print()
-
-for comparison in ["lump_vs_unlev", "monthly_vs_unlev"]:
-    if comparison == "lump_vs_unlev":
-        print("COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged")
-    else:
-        print("COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged")
-
-    print("-" * 120)
-
-    for years in [5, 10, 15]:
-        print(f"\n{years}-YEAR PERIODS:")
-        print(f"{'Index':<20} {'Leveraged Win Rate':<30} {'Non-Leveraged Win Rate':<30}")
-        print("-" * 120)
-
-        for idx_name, results in all_results.items():
-            key = f"{years}_{comparison}"
-            if key in results:
-                r = results[key]
-                lev_rate = r['win_rate']
-                unlev_rate = 100 - lev_rate
-                print(f"{idx_name:<20} {lev_rate:>8.1f}%                     {unlev_rate:>8.1f}%")
+if __name__ == '__main__':
+    # Analyze all indices
+    indices = [
+        PairwiseComparison("S&P 500", "sp500_stooq_daily.csv", 'Date', 'Close', 1950),
+        PairwiseComparison("DJIA", "djia_stooq_daily.csv", 'Date', 'Close', 1950),
+        PairwiseComparison("NASDAQ", "nasdaq_fred.csv", 'observation_date', 'NASDAQCOM', 1971),
+        PairwiseComparison("Nikkei 225", "nikkei225_fred.csv", 'observation_date', 'NIKKEI225', 1950),
+    ]
 
     print()
+    print("╔" + "=" * 118 + "╗")
+    print("║" + " " * 40 + "PAIRWISE COMPARISON ANALYSIS" + " " * 50 + "║")
+    print("║" + " " * 25 + "Head-to-Head: Leveraged vs Non-Leveraged Strategies" + " " * 42 + "║")
+    print("╚" + "=" * 118 + "╝")
+    print()
+
+    all_results = {}
+
+    for idx_analyzer in indices:
+        try:
+            results = idx_analyzer.analyze(timeframes=[5, 10, 15], monthly_amount=500)
+            all_results[idx_analyzer.name] = results
+            print()
+        except Exception as e:
+            print(f"Error analyzing {idx_analyzer.name}: {e}\n")
+
+    # Summary tables
+    print()
+    print("=" * 120)
+    print("SUMMARY: WIN RATES BY COMPARISON")
     print("=" * 120)
     print()
 
-print("=" * 120)
+    for comparison in ["lump_vs_unlev", "monthly_vs_unlev"]:
+        if comparison == "lump_vs_unlev":
+            print("COMPARISON 1: Lump-Sum 2x Leveraged vs Monthly Non-Leveraged")
+        else:
+            print("COMPARISON 2: Monthly 2x Leveraged vs Monthly Non-Leveraged")
+
+        print("-" * 120)
+
+        for years in [5, 10, 15]:
+            print(f"\n{years}-YEAR PERIODS:")
+            print(f"{'Index':<20} {'Leveraged Win Rate':<30} {'Non-Leveraged Win Rate':<30}")
+            print("-" * 120)
+
+            for idx_name, results in all_results.items():
+                key = f"{years}_{comparison}"
+                if key in results:
+                    r = results[key]
+                    lev_rate = r['win_rate']
+                    unlev_rate = 100 - lev_rate
+                    print(f"{idx_name:<20} {lev_rate:>8.1f}%                     {unlev_rate:>8.1f}%")
+
+        print()
+        print("=" * 120)
+        print()
+
+    print("=" * 120)
