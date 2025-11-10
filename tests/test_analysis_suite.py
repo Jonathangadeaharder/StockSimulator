@@ -145,6 +145,18 @@ class TestReturnCalculations(unittest.TestCase):
             {'date': datetime(2020, 1, 4), 'close': 103.0},
         ]
 
+    def _calculate_price_return(self, data, index):
+        """Helper method to calculate price return between consecutive periods.
+        
+        Args:
+            data: List of dictionaries with 'close' prices
+            index: Current index (must be >= 1)
+            
+        Returns:
+            Price return as a decimal (e.g., 0.02 for 2% return)
+        """
+        return (data[index]['close'] - data[index-1]['close']) / data[index-1]['close']
+
     def test_daily_returns_calculation(self):
         """Daily returns should be calculated correctly."""
         # Using PairwiseComparison.calculate_returns logic
@@ -152,10 +164,7 @@ class TestReturnCalculations(unittest.TestCase):
         daily_dividend = 0.02 / 252  # 2% annual dividend
 
         for i in range(1, len(self.sample_data)):
-            price_return = (
-                (self.sample_data[i]['close'] - self.sample_data[i-1]['close']) /
-                self.sample_data[i-1]['close']
-            )
+            price_return = self._calculate_price_return(self.sample_data, i)
             total_return = price_return + daily_dividend
             returns.append(total_return)
 
@@ -422,6 +431,18 @@ class TestMonthlyInvestmentSimulation(unittest.TestCase):
 class TestEdgeCases(unittest.TestCase):
     """Test edge cases and error handling."""
 
+    def _calculate_price_return(self, data, index):
+        """Helper method to calculate price return between consecutive periods.
+        
+        Args:
+            data: List of dictionaries with 'close' prices
+            index: Current index (must be >= 1)
+            
+        Returns:
+            Price return as a decimal (e.g., 0.02 for 2% return)
+        """
+        return (data[index]['close'] - data[index-1]['close']) / data[index-1]['close']
+
     def test_division_by_zero_protection(self):
         """Calculations should handle zero denominators gracefully."""
         # IRR calculation with near-zero derivative
@@ -454,7 +475,7 @@ class TestEdgeCases(unittest.TestCase):
 
         returns = []
         for i in range(1, len(data)):
-            ret = (data[i]['close'] - data[i-1]['close']) / data[i-1]['close']
+            ret = self._calculate_price_return(data, i)
             returns.append(ret)
 
         # Should have 0 returns (need 2 points for 1 return)
