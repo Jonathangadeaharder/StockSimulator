@@ -6,10 +6,6 @@ Generate comprehensive HTML performance reports.
 
 from typing import Dict, List, Optional
 from datetime import datetime
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.core.backtester import BacktestResult
 from stocksimulator.reporting.charts import ChartGenerator

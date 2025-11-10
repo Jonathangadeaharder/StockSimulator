@@ -7,10 +7,6 @@ Abstract base class for all trading strategies.
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import date
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.models.portfolio import Portfolio
 from stocksimulator.models.market_data import MarketData

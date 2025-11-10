@@ -7,10 +7,6 @@ rebalances periodically regardless of market conditions.
 
 from typing import Dict, Optional
 from datetime import date
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.strategies.base_strategy import BaseStrategy
 from stocksimulator.models.portfolio import Portfolio
@@ -227,60 +223,4 @@ class AllWeatherStrategy(DCAStrategy):
             target_allocation=target_allocation,
             rebalance_threshold=rebalance_threshold,
             name="All Weather Portfolio"
-        )
-
-
-class ThreeFundPortfolio(DCAStrategy):
-    """
-    Simple three-fund portfolio (Bogleheads approach).
-
-    Default allocation:
-    - 50% Total US Stock Market (VTI)
-    - 30% Total International Stock (VXUS)
-    - 20% Total Bond Market (BND)
-
-    Example:
-        >>> strategy = ThreeFundPortfolio()
-    """
-
-    def __init__(
-        self,
-        us_stocks: float = 50.0,
-        international_stocks: float = 30.0,
-        bonds: float = 20.0,
-        symbols: Optional[Dict[str, str]] = None,
-        rebalance_threshold: float = 5.0
-    ):
-        """
-        Initialize three-fund portfolio.
-
-        Args:
-            us_stocks: US stocks percentage
-            international_stocks: International stocks percentage
-            bonds: Bonds percentage
-            symbols: Optional custom symbols
-            rebalance_threshold: Rebalance threshold
-        """
-        if symbols is None:
-            symbols = {
-                'us_stocks': 'VTI',
-                'international_stocks': 'VXUS',
-                'bonds': 'BND'
-            }
-
-        # Validate percentages sum to 100
-        total = us_stocks + international_stocks + bonds
-        if abs(total - 100.0) > 0.01:
-            raise ValueError(f"Allocations must sum to 100%, got {total}%")
-
-        target_allocation = {
-            symbols['us_stocks']: us_stocks,
-            symbols['international_stocks']: international_stocks,
-            symbols['bonds']: bonds
-        }
-
-        super().__init__(
-            target_allocation=target_allocation,
-            rebalance_threshold=rebalance_threshold,
-            name="Three-Fund Portfolio"
         )

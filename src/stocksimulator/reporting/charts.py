@@ -6,12 +6,8 @@ Create charts for performance reports using matplotlib.
 
 from typing import List, Dict, Any, Optional
 from datetime import date
-import sys
-import os
 import base64
 from io import BytesIO
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 
 class ChartGenerator:

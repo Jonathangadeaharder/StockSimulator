@@ -6,10 +6,6 @@ Download historical data from Yahoo Finance.
 
 from datetime import date, datetime, timedelta
 from typing import Optional
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.models.market_data import MarketData, OHLCV
 from stocksimulator.downloaders.base import DataDownloader

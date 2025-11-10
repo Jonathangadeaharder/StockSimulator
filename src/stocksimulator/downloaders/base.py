@@ -7,10 +7,6 @@ Abstract base class for data downloaders.
 from abc import ABC, abstractmethod
 from datetime import date
 from typing import Optional
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.models.market_data import MarketData
 

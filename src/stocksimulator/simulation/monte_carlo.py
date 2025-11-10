@@ -7,10 +7,7 @@ Run thousands of randomized scenarios to assess strategy robustness.
 from typing import Dict, List, Callable, Optional
 from datetime import date, timedelta
 import random
-import sys
 import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.core.backtester import Backtester, BacktestResult
 from stocksimulator.models.market_data import MarketData, OHLCV

@@ -7,10 +7,6 @@ Grid search and optimization tools for finding optimal strategy parameters.
 from typing import Dict, List, Any, Callable, Optional, Tuple
 from datetime import date
 import itertools
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.core.backtester import Backtester, BacktestResult
 from stocksimulator.models.market_data import MarketData
@@ -203,88 +199,3 @@ class GridSearchOptimizer(StrategyOptimizer):
         return count
 
 
-class RandomSearchOptimizer(StrategyOptimizer):
-    """
-    Random search optimization.
-
-    Randomly samples parameter space - faster than grid search for large spaces.
-    """
-
-    def optimize(
-        self,
-        strategy_class: type,
-        param_distributions: Dict[str, Callable],
-        market_data: Dict[str, MarketData],
-        n_iterations: int = 50,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-        top_n: int = 5
-    ) -> List[OptimizationResult]:
-        """
-        Perform random search optimization.
-
-        Args:
-            strategy_class: Strategy class to optimize
-            param_distributions: Dict of parameter_name -> sampling function
-            market_data: Market data
-            n_iterations: Number of random samples to try
-            start_date: Backtest start date
-            end_date: Backtest end date
-            top_n: Number of top results to return
-
-        Returns:
-            List of top N optimization results
-
-        Example:
-            >>> import random
-            >>> optimizer = RandomSearchOptimizer()
-            >>> param_distributions = {
-            ...     'lookback_days': lambda: random.choice([60, 90, 126, 180, 252]),
-            ...     'top_n': lambda: random.randint(1, 5),
-            ... }
-            >>> results = optimizer.optimize(MomentumStrategy, param_distributions, market_data)
-        """
-        import random
-
-        print(f"Starting random search optimization...")
-        print(f"  Strategy: {strategy_class.__name__}")
-        print(f"  Parameters: {list(param_distributions.keys())}")
-        print(f"  Iterations: {n_iterations}")
-        print(f"  Optimizing for: {self.optimization_metric}")
-        print()
-
-        results = []
-
-        for i in range(n_iterations):
-            # Sample parameters
-            params = {name: sampler() for name, sampler in param_distributions.items()}
-
-            # Evaluate
-            try:
-                result = self.evaluate_parameters(
-                    strategy_class,
-                    params,
-                    market_data,
-                    start_date,
-                    end_date
-                )
-                results.append(result)
-
-                print(f"  [{i+1}/{n_iterations}] {params} → {self.optimization_metric}={result.metric_value:.3f}")
-
-            except Exception as e:
-                print(f"  [{i+1}/{n_iterations}] {params} → ERROR: {e}")
-
-        # Sort by metric value
-        results.sort(key=lambda r: r.metric_value, reverse=True)
-
-        print()
-        print("=" * 80)
-        print(f"OPTIMIZATION COMPLETE - Top {min(top_n, len(results))} Results")
-        print("=" * 80)
-
-        for i, result in enumerate(results[:top_n], 1):
-            print(f"\n{i}. {self.optimization_metric.upper()}: {result.metric_value:.3f}")
-            print(f"   Parameters: {result.parameters}")
-
-        return results[:top_n]

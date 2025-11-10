@@ -107,40 +107,6 @@ python historical_data/detailed_leverage_table.py
 
 ## Using the Python API
 
-### Example: Create and Manage a Portfolio
-
-```python
-from src.stocksimulator.core.portfolio_manager import PortfolioManager
-from src.stocksimulator.models.market_data import MarketData, OHLCV
-from datetime import date
-
-# Initialize manager
-manager = PortfolioManager()
-
-# Create portfolio
-portfolio = manager.create_portfolio(
-    portfolio_id="demo_001",
-    name="My First Portfolio",
-    initial_cash=100000.0
-)
-
-# Execute a trade
-manager.execute_trade(
-    portfolio_id="demo_001",
-    symbol="SPY",
-    shares=100,
-    price=450.0,
-    transaction_cost_bps=2.0
-)
-
-# Check performance
-current_prices = {"SPY": 460.0}
-performance = manager.get_portfolio_performance("demo_001", current_prices)
-
-print(f"Total Return: {performance['returns']['percent_return']:.2f}%")
-# Output: Total Return: 2.22%
-```
-
 ### Example: Run a Backtest
 
 ```python

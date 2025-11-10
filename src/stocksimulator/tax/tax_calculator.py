@@ -8,10 +8,6 @@ from datetime import date, timedelta
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 
 class TaxTerm(Enum):

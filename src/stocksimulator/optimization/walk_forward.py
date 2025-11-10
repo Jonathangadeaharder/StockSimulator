@@ -6,10 +6,6 @@ Out-of-sample testing to avoid overfitting.
 
 from typing import Dict, List, Any, Optional
 from datetime import date, timedelta
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.core.backtester import Backtester
 from stocksimulator.models.market_data import MarketData

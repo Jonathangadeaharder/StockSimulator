@@ -240,7 +240,7 @@ calculate_var(returns, confidence_level)
 User Request
     │
     ▼
-PortfolioManager.execute_trade()
+Backtester.execute_trade()
     │
     ├─► Validate (sufficient funds/shares)
     │

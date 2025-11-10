@@ -8,9 +8,6 @@ import csv
 import os
 from datetime import datetime, date
 from typing import Dict, List, Optional
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from stocksimulator.models.market_data import MarketData, OHLCV
 
