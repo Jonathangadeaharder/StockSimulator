@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Compare THREE strategies across all indices:
 1. Monthly DCA with 2x leverage

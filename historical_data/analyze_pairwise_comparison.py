@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Pairwise comparisons of investment strategies:
 1. Lump-Sum 2x Leveraged vs Monthly Non-Leveraged (same total $)

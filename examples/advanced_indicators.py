@@ -1,3 +1,4 @@
+# @structurelint:no-test
 """
 Example: Advanced Technical Indicators
 

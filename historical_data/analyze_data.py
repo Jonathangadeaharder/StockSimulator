@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """Quick analysis of downloaded historical index data"""
 
 import csv

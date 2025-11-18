@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Accurate 2x Leveraged ETF Simulation with DAILY Rebalancing
 Uses daily price data for precise simulation

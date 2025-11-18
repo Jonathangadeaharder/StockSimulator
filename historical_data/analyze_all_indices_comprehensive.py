@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Comprehensive analysis of 2x Leveraged ETF performance across ALL major indices
 Compares Monthly DCA vs Lump-Sum for each index

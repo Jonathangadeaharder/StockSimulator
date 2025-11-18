@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Verify the computation logic for monthly DCA vs lump-sum analysis
 Step-by-step verification with detailed output

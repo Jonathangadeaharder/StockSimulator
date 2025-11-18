@@ -1,3 +1,4 @@
+# @structurelint:no-test
 """
 Example: Monte Carlo Simulation
 

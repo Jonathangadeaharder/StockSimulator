@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Volatility Impact Analysis on Leveraged Strategies
 

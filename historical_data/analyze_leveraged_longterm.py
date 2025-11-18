@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Analyze 2x Leveraged ETF for LONG-TERM periods (15-30 years)
 Check if leveraged ETFs still underperform over very long horizons

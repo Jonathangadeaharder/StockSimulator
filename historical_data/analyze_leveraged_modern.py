@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Analyze 2x Leveraged ETF vs Non-Leveraged Performance - MODERN ERA (1950+)
 Focus on more recent market conditions
