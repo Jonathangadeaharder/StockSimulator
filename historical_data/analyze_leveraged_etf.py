@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Analyze 2x Leveraged ETF vs Non-Leveraged Performance
 Find the worst 5-15 year period for leveraged ETF with dividend reinvestment

@@ -1,3 +1,4 @@
+# @structurelint:no-test
 """
 Example: Tax-Aware Backtesting
 

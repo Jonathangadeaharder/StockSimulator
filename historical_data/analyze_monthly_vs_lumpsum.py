@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Compare Monthly Investing ($500/month) vs Lump-Sum Investment
 2x Leveraged ETF vs Unleveraged S&P 500

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """Download historical index data from various sources"""
 
 import urllib.request

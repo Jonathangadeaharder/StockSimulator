@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Clean comparison of $500/month investment across THREE strategies:
 1. $500/month into 2x Leveraged ETF

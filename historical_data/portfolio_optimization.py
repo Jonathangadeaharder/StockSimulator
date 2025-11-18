@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# @structurelint:no-test
 """
 Portfolio Optimization: Optimal Leveraged Allocation
 
