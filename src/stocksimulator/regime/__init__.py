@@ -30,6 +30,13 @@ from .crisis_rebalancer import (
     compare_rebalancing_strategies
 )
 
+from .portfolio_comparison import (
+    PortfolioComparator,
+    PortfolioComparison,
+    RegimePerformance,
+    create_comparison_report
+)
+
 __all__ = [
     # Regime Detection
     'MarketRegimeDetector',
@@ -53,4 +60,10 @@ __all__ = [
     'RebalancingSchedule',
     'TransitionResult',
     'compare_rebalancing_strategies',
+
+    # Portfolio Comparison
+    'PortfolioComparator',
+    'PortfolioComparison',
+    'RegimePerformance',
+    'create_comparison_report',
 ]
