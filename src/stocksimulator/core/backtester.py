@@ -12,6 +12,18 @@ from stocksimulator.models.market_data import MarketData, OHLCV
 from stocksimulator.models.transaction import Transaction
 from stocksimulator.core.risk_calculator import RiskCalculator
 
+# Import cost components (Phase 1 enhancement)
+try:
+    from stocksimulator.costs import (
+        BaseCost,
+        TransactionCost,
+        HoldingCost,
+        LeveragedETFCost
+    )
+    COSTS_AVAILABLE = True
+except ImportError:
+    COSTS_AVAILABLE = False
+
 
 class BacktestResult:
     """Container for backtest results."""
@@ -112,17 +124,48 @@ class Backtester:
     def __init__(
         self,
         initial_cash: float = 100000.0,
-        transaction_cost_bps: float = 2.0
+        transaction_cost_bps: float = 2.0,
+        costs: Optional[List] = None
     ):
         """
         Initialize backtester.
 
         Args:
             initial_cash: Starting cash balance
-            transaction_cost_bps: Transaction costs in basis points
+            transaction_cost_bps: Transaction costs in basis points (legacy parameter)
+            costs: Optional list of cost components (BaseCost objects).
+                  If None, uses default TransactionCost with transaction_cost_bps.
+                  Phase 1 enhancement: allows modular cost modeling.
+
+        Example:
+            >>> # Legacy usage (still works)
+            >>> backtester = Backtester(initial_cash=100000, transaction_cost_bps=2.0)
+
+            >>> # New modular costs (Phase 1)
+            >>> from stocksimulator.costs import TransactionCost, LeveragedETFCost
+            >>> backtester = Backtester(
+            ...     initial_cash=100000,
+            ...     costs=[
+            ...         TransactionCost(base_bps=2.0),
+            ...         LeveragedETFCost(ter=0.006, base_excess_cost=0.015)
+            ...     ]
+            ... )
         """
         self.initial_cash = initial_cash
         self.transaction_cost_bps = transaction_cost_bps
+
+        # Set up cost components (Phase 1 enhancement)
+        if costs is not None:
+            self.costs = costs
+            self.use_modular_costs = True
+        else:
+            # Backward compatibility: create default TransactionCost if available
+            if COSTS_AVAILABLE:
+                self.costs = [TransactionCost(base_bps=transaction_cost_bps)]
+                self.use_modular_costs = True
+            else:
+                self.costs = []
+                self.use_modular_costs = False
 
     def run_backtest(
         self,
@@ -284,5 +327,44 @@ class Backtester:
 
         return results
 
+    def calculate_costs(
+        self,
+        trades: Dict[str, float],
+        positions: Dict[str, float],
+        prices: Dict[str, float],
+        current_date: date
+    ) -> float:
+        """
+        Calculate total costs using modular cost components.
+
+        Phase 1 enhancement: supports modular cost modeling.
+
+        Args:
+            trades: Dictionary of symbol -> shares traded
+            positions: Dictionary of symbol -> current shares held
+            prices: Dictionary of symbol -> current price
+            current_date: Current date
+
+        Returns:
+            Total cost for this period
+        """
+        if not self.use_modular_costs:
+            # Legacy fallback: use transaction_cost_bps
+            total_cost = 0.0
+            for symbol, shares in trades.items():
+                if abs(shares) < 1e-10:
+                    continue
+                if symbol not in prices or prices[symbol] <= 0:
+                    continue
+                trade_value = abs(shares * prices[symbol])
+                total_cost += trade_value * (self.transaction_cost_bps / 10000)
+            return total_cost
+
+        # Use modular cost components
+        return sum(
+            cost.calculate(trades, positions, prices, current_date)
+            for cost in self.costs
+        )
+
     def __repr__(self) -> str:
-        return f"Backtester(initial_cash=${self.initial_cash:,.2f})"
+        return f"Backtester(initial_cash=${self.initial_cash:,.2f}, costs={len(self.costs)})"

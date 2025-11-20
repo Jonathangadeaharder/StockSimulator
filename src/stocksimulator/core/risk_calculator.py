@@ -322,6 +322,153 @@ class RiskCalculator:
 
         return ir
 
+    def calculate_cdar(
+        self,
+        values: List[float],
+        confidence_level: float = 0.95
+    ) -> float:
+        """
+        Calculate Conditional Drawdown at Risk (CDaR).
+
+        CDaR is the average of the worst (1-confidence_level)% drawdowns.
+        More tail-risk focused than maximum drawdown.
+
+        Args:
+            values: List of portfolio values over time
+            confidence_level: Confidence level (0.95 = average of worst 5% drawdowns)
+
+        Returns:
+            CDaR as a percentage
+        """
+        if not values or len(values) < 2:
+            return 0.0
+
+        # Calculate running maximum
+        running_max = [values[0]]
+        for val in values[1:]:
+            running_max.append(max(running_max[-1], val))
+
+        # Calculate drawdown series
+        drawdowns = []
+        for i in range(len(values)):
+            if running_max[i] > 0:
+                dd = (values[i] - running_max[i]) / running_max[i] * 100
+                drawdowns.append(dd)
+
+        if not drawdowns:
+            return 0.0
+
+        # Find threshold for worst (1-confidence_level)% drawdowns
+        sorted_dds = sorted(drawdowns)
+        cutoff_idx = int(len(sorted_dds) * (1 - confidence_level))
+        if cutoff_idx == 0:
+            cutoff_idx = 1  # At least take the worst one
+
+        worst_dds = sorted_dds[:cutoff_idx]
+
+        # Return average of worst drawdowns (as positive percentage)
+        return abs(sum(worst_dds) / len(worst_dds)) if worst_dds else 0.0
+
+    def calculate_ulcer_index(self, values: List[float]) -> float:
+        """
+        Calculate Ulcer Index - measures depth and duration of drawdowns.
+
+        Lower is better. Penalizes prolonged drawdowns more than brief dips.
+        More sensitive to long, shallow drawdowns than maximum drawdown.
+
+        Args:
+            values: List of portfolio values over time
+
+        Returns:
+            Ulcer Index (percentage)
+        """
+        if not values or len(values) < 2:
+            return 0.0
+
+        # Calculate running maximum
+        running_max = [values[0]]
+        for val in values[1:]:
+            running_max.append(max(running_max[-1], val))
+
+        # Calculate percentage drawdowns
+        squared_dds = []
+        for i in range(len(values)):
+            if running_max[i] > 0:
+                dd = (values[i] - running_max[i]) / running_max[i] * 100
+                squared_dds.append(dd ** 2)
+
+        if not squared_dds:
+            return 0.0
+
+        # Ulcer Index is sqrt of mean squared drawdown
+        return (sum(squared_dds) / len(squared_dds)) ** 0.5
+
+    def calculate_omega_ratio(
+        self,
+        returns: List[float],
+        threshold: float = 0.0
+    ) -> float:
+        """
+        Calculate Omega Ratio - probability-weighted ratio of gains vs losses.
+
+        Captures all moments of return distribution (not just mean/variance).
+        Omega > 1 indicates gains outweigh losses.
+
+        Args:
+            returns: List of period returns
+            threshold: Minimum acceptable return (default: 0 for positive returns)
+
+        Returns:
+            Omega Ratio (higher is better, >1 is good)
+        """
+        if not returns:
+            return 0.0
+
+        # Calculate gains and losses relative to threshold
+        gains = sum(max(r - threshold, 0) for r in returns)
+        losses = sum(max(threshold - r, 0) for r in returns)
+
+        if losses == 0:
+            # No losses - return inf if there are gains, 1.0 otherwise
+            return float('inf') if gains > 0 else 1.0
+
+        return gains / losses
+
+    def calculate_calmar_ratio(
+        self,
+        returns: List[float],
+        values: List[float],
+        periods_per_year: int = 252
+    ) -> float:
+        """
+        Calculate Calmar Ratio - annualized return / maximum drawdown.
+
+        Measures return per unit of drawdown risk.
+        Higher is better.
+
+        Args:
+            returns: List of period returns
+            values: Portfolio value time series
+            periods_per_year: Number of periods per year
+
+        Returns:
+            Calmar Ratio (higher is better)
+        """
+        if not returns or not values:
+            return 0.0
+
+        # Calculate annualized return
+        mean_return = sum(returns) / len(returns)
+        annualized_return = (1 + mean_return) ** periods_per_year - 1
+
+        # Calculate max drawdown (as decimal, not percentage)
+        max_dd = self.calculate_max_drawdown(values) / 100
+
+        if max_dd == 0:
+            return float('inf') if annualized_return > 0 else 0.0
+
+        return annualized_return / max_dd
+
     def calculate_comprehensive_metrics(
         self,
         returns: List[float],
@@ -337,15 +484,34 @@ class RiskCalculator:
             benchmark_returns: Optional benchmark returns for beta/IR
 
         Returns:
-            Dictionary with all risk metrics
+            Dictionary with all risk metrics including:
+            - Volatility (standard deviation)
+            - Sharpe Ratio
+            - Sortino Ratio
+            - Maximum Drawdown
+            - VaR (95%)
+            - CVaR (95%)
+            - CDaR (95%) - NEW
+            - Ulcer Index - NEW
+            - Omega Ratio - NEW
+            - Calmar Ratio - NEW
+            - Beta (if benchmark provided)
+            - Information Ratio (if benchmark provided)
         """
         metrics = {
+            # Classic risk metrics
             'volatility': self.calculate_volatility(returns),
             'sharpe_ratio': self.calculate_sharpe_ratio(returns),
             'sortino_ratio': self.calculate_sortino_ratio(returns),
             'max_drawdown': self.calculate_max_drawdown(values),
             'var_95': self.calculate_var(returns, confidence_level=0.95),
-            'cvar_95': self.calculate_cvar(returns, confidence_level=0.95)
+            'cvar_95': self.calculate_cvar(returns, confidence_level=0.95),
+
+            # Advanced risk metrics (Phase 1 enhancements)
+            'cdar_95': self.calculate_cdar(values, confidence_level=0.95),
+            'ulcer_index': self.calculate_ulcer_index(values),
+            'omega_ratio': self.calculate_omega_ratio(returns, threshold=0.0),
+            'calmar_ratio': self.calculate_calmar_ratio(returns, values)
         }
 
         if benchmark_returns and len(benchmark_returns) == len(returns):

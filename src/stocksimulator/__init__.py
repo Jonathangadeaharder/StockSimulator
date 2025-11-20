@@ -8,3 +8,6 @@ __license__ = "MIT"
 
 from .core import *
 from .models import *
+
+# Quick-start API (Phase 1 enhancement)
+from .quick import quick_backtest, print_backtest, bt, pb

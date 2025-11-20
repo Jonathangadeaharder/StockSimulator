@@ -17,6 +17,17 @@ StockSimulator is an advanced financial simulation platform designed for:
 - **Risk Analysis**: Comprehensive risk metrics including VaR, CVaR, Sharpe ratio, and maximum drawdown
 - **Trading Strategies**: Support for DCA, momentum, mean reversion, and custom strategies
 
+## 🚀 NEW: Phase 1 Enhancements
+
+**Latest Update**: Phase 1 improvements inspired by leading portfolio optimization libraries ([full analysis](docs/SIMILAR_PROJECTS_ANALYSIS.md))
+
+- ✨ **Modular Cost Components**: Separate transaction, holding, and leveraged ETF costs with era-specific calibration
+- ✨ **Discrete Allocation**: Convert theoretical weights to whole shares with tracking error calculation
+- ✨ **Enhanced Risk Metrics**: Added CDaR, Ulcer Index, Omega Ratio, and Calmar Ratio
+- ✨ **Simple API**: Ultra-simple 1-line backtesting with `quick_backtest('SPY')` or `pb('SPY')`
+
+See [PHASE1_ENHANCEMENTS.md](docs/PHASE1_ENHANCEMENTS.md) for complete documentation.
+
 ## Key Features
 
 ### 📊 Historical Data Analysis
