@@ -1,21 +1,19 @@
 """
-Data loading and management
+Data loading and management module.
 
-This module provides data loaders for:
-- CSV files (historical data)
-- Downloaded data (Yahoo Finance, Alpha Vantage)
-- Data caching
+Provides access to diverse asset classes for portfolio construction.
 """
 
-from .loaders import CSVLoader, load_from_csv, load_multiple_csv
-from .cache import DataCache
-
-# Note: Downloaders are in a separate module to avoid dependencies
-# Import from stocksimulator.downloaders if you need them
+from .multi_asset_loader import (
+    MultiAssetDataLoader,
+    AssetClassRegistry,
+    AssetClassInfo,
+    print_asset_summary
+)
 
 __all__ = [
-    'CSVLoader',
-    'load_from_csv',
-    'load_multiple_csv',
-    'DataCache',
+    'MultiAssetDataLoader',
+    'AssetClassRegistry',
+    'AssetClassInfo',
+    'print_asset_summary',
 ]
