@@ -1,12 +1,17 @@
 """
-Monte Carlo Simulation
+Monte Carlo Simulation Module
 
-Run thousands of randomized scenarios to test strategy robustness.
+Tools for validating strategy robustness through randomized testing.
 """
 
-from .monte_carlo import MonteCarloSimulator, MonteCarloResult
+from .random_entry_exit import (
+    RandomEntryExitSimulator,
+    RandomBacktestResult,
+    print_monte_carlo_summary
+)
 
 __all__ = [
-    'MonteCarloSimulator',
-    'MonteCarloResult',
+    'RandomEntryExitSimulator',
+    'RandomBacktestResult',
+    'print_monte_carlo_summary',
 ]

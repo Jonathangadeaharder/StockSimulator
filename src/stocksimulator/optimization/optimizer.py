@@ -7,6 +7,8 @@ Grid search and optimization tools for finding optimal strategy parameters.
 from typing import Dict, List, Any, Callable, Optional, Tuple
 from datetime import date
 import itertools
+import concurrent.futures
+import multiprocessing
 
 from stocksimulator.core.backtester import Backtester, BacktestResult
 from stocksimulator.models.market_data import MarketData
@@ -197,5 +199,148 @@ class GridSearchOptimizer(StrategyOptimizer):
         for values in param_grid.values():
             count *= len(values)
         return count
+
+    def optimize_parallel(
+        self,
+        strategy_class: type,
+        param_grid: Dict[str, List[Any]],
+        market_data: Dict[str, MarketData],
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        top_n: int = 5,
+        max_workers: Optional[int] = None
+    ) -> List[OptimizationResult]:
+        """
+        Perform parallel grid search optimization.
+
+        Uses multiprocessing to evaluate parameter combinations in parallel,
+        significantly speeding up optimization for large parameter spaces.
+
+        Args:
+            strategy_class: Strategy class to optimize
+            param_grid: Dictionary of parameter_name -> list of values to try
+            market_data: Market data
+            start_date: Backtest start date
+            end_date: Backtest end date
+            top_n: Number of top results to return
+            max_workers: Maximum number of parallel workers (None = CPU count)
+
+        Returns:
+            List of top N optimization results
+
+        Example:
+            >>> optimizer = GridSearchOptimizer()
+            >>> param_grid = {
+            ...     'lookback_days': [60, 126, 252, 504],
+            ...     'top_n': [1, 2, 3, 4, 5],
+            ...     'equal_weight': [True, False]
+            ... }
+            >>> # Runs 40 backtests in parallel using all CPU cores
+            >>> results = optimizer.optimize_parallel(MomentumStrategy, param_grid, market_data)
+            >>> print(f"Best Sharpe: {results[0].metric_value:.3f}")
+
+        Note:
+            - Typical speedup: 4-8x on modern multi-core CPUs
+            - Memory usage scales with number of workers
+            - Best for computationally expensive backtests
+        """
+        if max_workers is None:
+            max_workers = multiprocessing.cpu_count()
+
+        print(f"Starting PARALLEL grid search optimization...")
+        print(f"  Strategy: {strategy_class.__name__}")
+        print(f"  Parameters: {list(param_grid.keys())}")
+        print(f"  Combinations: {self._count_combinations(param_grid)}")
+        print(f"  Workers: {max_workers} (CPU cores: {multiprocessing.cpu_count()})")
+        print(f"  Optimizing for: {self.optimization_metric}")
+        print()
+
+        # Generate all parameter combinations
+        param_names = list(param_grid.keys())
+        param_values = list(param_grid.values())
+        combinations = list(itertools.product(*param_values))
+
+        def evaluate_single(args):
+            """
+            Evaluate single parameter combination.
+
+            Args are unpacked as (combination_index, parameter_combination)
+            """
+            idx, combination = args
+            params = dict(zip(param_names, combination))
+
+            try:
+                # Create fresh backtester instance for this worker
+                # (avoids potential state sharing issues)
+                worker_backtester = Backtester(
+                    initial_cash=self.backtester.initial_cash,
+                    transaction_cost_bps=self.backtester.transaction_cost_bps
+                )
+
+                # Instantiate strategy
+                strategy = strategy_class(**params)
+
+                # Run backtest
+                result = worker_backtester.run_backtest(
+                    strategy_name=f"{strategy_class.__name__}_{params}",
+                    market_data=market_data,
+                    strategy_func=strategy,
+                    start_date=start_date,
+                    end_date=end_date
+                )
+
+                # Extract metric
+                summary = result.get_performance_summary()
+                metric_value = summary.get(self.optimization_metric, 0.0)
+
+                return OptimizationResult(params, metric_value, result)
+
+            except Exception as e:
+                print(f"  [Worker {idx+1}] ERROR with {params}: {e}")
+                return None
+
+        # Run in parallel
+        print(f"Evaluating {len(combinations)} combinations in parallel...")
+
+        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_params = {
+                executor.submit(evaluate_single, (i, comb)): comb
+                for i, comb in enumerate(combinations)
+            }
+
+            # Collect results as they complete
+            results = []
+            completed = 0
+            total = len(combinations)
+
+            for future in concurrent.futures.as_completed(future_to_params):
+                completed += 1
+                result = future.result()
+
+                if result is not None:
+                    results.append(result)
+                    print(f"  [{completed}/{total}] {result.parameters} → "
+                          f"{self.optimization_metric}={result.metric_value:.3f}")
+                else:
+                    print(f"  [{completed}/{total}] Failed")
+
+        # Sort by metric value (descending)
+        results.sort(key=lambda r: r.metric_value, reverse=True)
+
+        print()
+        print("=" * 80)
+        print(f"PARALLEL OPTIMIZATION COMPLETE - Top {min(top_n, len(results))} Results")
+        print("=" * 80)
+
+        for i, result in enumerate(results[:top_n], 1):
+            print(f"\n{i}. {self.optimization_metric.upper()}: {result.metric_value:.3f}")
+            print(f"   Parameters: {result.parameters}")
+
+            summary = result.backtest_result.get_performance_summary()
+            print(f"   Return: {summary['annualized_return']:.2f}%")
+            print(f"   Max DD: {summary['max_drawdown']:.2f}%")
+
+        return results[:top_n]
 
 

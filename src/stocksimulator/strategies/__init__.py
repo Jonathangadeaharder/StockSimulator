@@ -8,6 +8,7 @@ This module provides a comprehensive collection of trading strategies:
 - **Momentum**: Trend-following strategies based on price momentum
 - **Mean Reversion**: Contrarian strategies buying dips and selling rallies
 - **Risk Parity**: Risk-balanced portfolios with equal risk contribution
+- **Hierarchical Risk Parity**: Diversification using hierarchical clustering
 
 Each strategy implements the BaseStrategy interface and can be used
 directly with the Backtester for historical simulation.
@@ -44,6 +45,9 @@ from .risk_parity_strategy import (
     VolatilityTargetingStrategy
 )
 
+# Hierarchical Risk Parity
+from .hierarchical_risk_parity import HierarchicalRiskParityStrategy
+
 __all__ = [
     # Base
     'BaseStrategy',
@@ -67,4 +71,7 @@ __all__ = [
     # Risk Parity
     'RiskParityStrategy',
     'VolatilityTargetingStrategy',
+
+    # Hierarchical Risk Parity
+    'HierarchicalRiskParityStrategy',
 ]

@@ -17,7 +17,7 @@ StockSimulator is an advanced financial simulation platform designed for:
 - **Risk Analysis**: Comprehensive risk metrics including VaR, CVaR, Sharpe ratio, and maximum drawdown
 - **Trading Strategies**: Support for DCA, momentum, mean reversion, and custom strategies
 
-## 🚀 NEW: Phase 1 & 2 Enhancements
+## 🚀 NEW: Phase 1, 2 & 3 Enhancements
 
 ### Phase 1: Practical Improvements ([docs](docs/PHASE1_ENHANCEMENTS.md))
 
@@ -32,6 +32,14 @@ StockSimulator is an advanced financial simulation platform designed for:
 - 🔒 **Causality Enforcement**: Prevents look-ahead bias - critical for research validity
 - ⚙️ **Flexible Constraints**: Sector limits, turnover, volatility targets, and custom constraints
 - 🎯 **Constrained Optimization**: Optimize portfolios with multiple simultaneous constraints
+
+### Phase 3: Advanced Features ([docs](docs/PHASE3_ENHANCEMENTS.md))
+
+- 🌳 **Hierarchical Risk Parity**: ML-based diversification without return forecasts (Lopez de Prado)
+- 📉 **Shrinkage Estimation**: Robust covariance matrices with Ledoit-Wolf optimal shrinkage
+- ⏭️ **Multi-Period Optimization**: Model Predictive Control considering future rebalancing costs
+- ⚡ **Parallel Grid Search**: 4-8x speedup for parameter optimization using multiprocessing
+- 🎲 **Monte Carlo Simulation**: Random entry/exit validation for realistic investor timing
 
 See [SIMILAR_PROJECTS_ANALYSIS.md](docs/SIMILAR_PROJECTS_ANALYSIS.md) for inspiration from leading libraries.
 
