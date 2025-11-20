@@ -41,6 +41,16 @@ StockSimulator is an advanced financial simulation platform designed for:
 - ⚡ **Parallel Grid Search**: 4-8x speedup for parameter optimization using multiprocessing
 - 🎲 **Monte Carlo Simulation**: Random entry/exit validation for realistic investor timing
 
+### 🆕 Regime-Aware Portfolio Analysis ([docs](docs/REGIME_ANALYSIS_GUIDE.md))
+
+- 📊 **Multi-Asset Support**: 13+ asset classes (stocks, bonds, alternatives, leverage, short positions)
+- 🔍 **Regime Detection**: Automatic classification into normal/pre-crisis/crisis/recovery
+- 🛡️ **Defensive Positioning**: Protect capital before and during market crashes
+- 📈 **Buy the Dip**: Gradual defensive→aggressive transitions without perfect timing
+- 🔄 **4 Rebalancing Strategies**: Linear, drawdown-triggered, volatility-adjusted, recovery-based
+- 📉 **Historical Crisis Testing**: Validated on dot-com (2000), financial crisis (2008), COVID (2020)
+- 🏆 **Portfolio Comparison**: Side-by-side testing across market regimes with automated reporting
+
 See [SIMILAR_PROJECTS_ANALYSIS.md](docs/SIMILAR_PROJECTS_ANALYSIS.md) for inspiration from leading libraries.
 
 ## Key Features

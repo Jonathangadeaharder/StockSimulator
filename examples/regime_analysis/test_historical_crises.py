@@ -37,7 +37,7 @@ from stocksimulator.regime import (
 
 def create_static_strategy(allocation: dict):
     """Create a static portfolio strategy."""
-    def strategy(current_date, historical_data, portfolio, current_prices):
+    def strategy(current_date, market_data, portfolio, current_prices):
         return allocation.copy()
     return strategy
 

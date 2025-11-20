@@ -64,7 +64,7 @@ class RegimeAwareStrategy:
     def __call__(
         self,
         current_date: date,
-        historical_data: Dict[str, pd.DataFrame],
+        market_data: Dict[str, pd.DataFrame],
         portfolio,
         current_prices: Dict[str, float]
     ) -> Dict[str, float]:
@@ -73,7 +73,7 @@ class RegimeAwareStrategy:
 
         Args:
             current_date: Current date
-            historical_data: Historical price data
+            market_data: Historical price data
             portfolio: Current portfolio
             current_prices: Current prices
 
@@ -88,7 +88,7 @@ class RegimeAwareStrategy:
                 return self._target_allocation if self._target_allocation else {}
 
         # Detect current regime
-        regime = self._detect_regime(current_date, historical_data)
+        regime = self._detect_regime(current_date, market_data)
 
         # Check if regime changed
         if regime != self._current_regime:
@@ -108,19 +108,33 @@ class RegimeAwareStrategy:
     def _detect_regime(
         self,
         current_date: date,
-        historical_data: Dict[str, pd.DataFrame]
+        market_data: Dict
     ) -> MarketRegime:
         """Detect current market regime."""
 
         # Use S&P 500 or first available asset for regime detection
-        if 'SP500' in historical_data:
-            price_data = historical_data['SP500']
+        if 'SP500' in market_data:
+            raw_data = market_data['SP500']
         else:
             # Use first available
-            price_data = list(historical_data.values())[0]
+            raw_data = list(market_data.values())[0]
+
+        # Convert MarketData to DataFrame if needed
+        if hasattr(raw_data, 'data'):  # It's a MarketData object
+            # Convert to DataFrame with Timestamp index for consistent comparison
+            price_data = pd.DataFrame({
+                'Date': pd.to_datetime([d.date for d in raw_data.data]),
+                'Close': [d.adjusted_close or d.close for d in raw_data.data]
+            })
+        else:
+            # It's already a DataFrame - ensure Date is Timestamp
+            price_data = raw_data.copy()
+            if 'Date' in price_data.columns:
+                price_data['Date'] = pd.to_datetime(price_data['Date'])
 
         # Filter to data up to current date
-        price_data = price_data[price_data['Date'] <= pd.Timestamp(current_date)]
+        current_ts = pd.Timestamp(current_date)
+        price_data = price_data[price_data['Date'] <= current_ts]
 
         if len(price_data) < 100:
             # Not enough data

@@ -20,7 +20,7 @@ from dataclasses import dataclass
 
 from stocksimulator.core.backtester import Backtester
 from stocksimulator.regime.regime_detector import MarketRegimeDetector, MarketRegime
-from stocksimulator.models.market_data import MarketData
+from stocksimulator.models.market_data import MarketData, OHLCV
 
 
 @dataclass
@@ -248,8 +248,7 @@ class PortfolioComparator:
         market_data_objects = {}
         for symbol, df in market_data.items():
             # Create MarketData objects from DataFrames
-            # Simplified - in practice would use proper conversion
-            market_data_objects[symbol] = df
+            market_data_objects[symbol] = self._dataframe_to_market_data(symbol, df)
 
         # Run backtest
         backtester = Backtester(
@@ -288,8 +287,8 @@ class PortfolioComparator:
 
         # Create equity curve with regime labels
         equity_curve = pd.DataFrame({
-            'date': result.dates,
-            'value': result.portfolio_values
+            'date': [pv['date'] for pv in result.portfolio_values],
+            'value': [pv['total_value'] for pv in result.portfolio_values]
         })
 
         # Add regime labels (align by date)
@@ -313,8 +312,8 @@ class PortfolioComparator:
         """Calculate performance metrics for each regime period."""
 
         # Align backtest dates with regime data
-        dates = pd.Series(backtest_result.dates)
-        values = pd.Series(backtest_result.portfolio_values)
+        dates = pd.Series([pv['date'] for pv in backtest_result.portfolio_values])
+        values = pd.Series([pv['total_value'] for pv in backtest_result.portfolio_values])
 
         performance_by_regime = {}
 
@@ -362,6 +361,38 @@ class PortfolioComparator:
             )
 
         return performance_by_regime
+
+    def _dataframe_to_market_data(self, symbol: str, df: pd.DataFrame) -> MarketData:
+        """Convert pandas DataFrame to MarketData object."""
+        data_points = []
+
+        for idx, row in df.iterrows():
+            # Get date from 'Date' column if it exists, otherwise from index
+            if 'Date' in row:
+                data_date = row['Date']
+            elif isinstance(idx, pd.Timestamp):
+                data_date = idx.date()
+            elif isinstance(idx, date):
+                data_date = idx
+            else:
+                continue  # Skip rows without valid dates
+
+            # Convert to date if datetime
+            if isinstance(data_date, pd.Timestamp):
+                data_date = data_date.date()
+
+            ohlcv = OHLCV(
+                date=data_date,
+                open=row.get('Open', row.get('Close', 0)),
+                high=row.get('High', row.get('Close', 0)),
+                low=row.get('Low', row.get('Close', 0)),
+                close=row['Close'],
+                volume=int(row.get('Volume', 0)),
+                adjusted_close=row.get('Adj Close', row['Close'])
+            )
+            data_points.append(ohlcv)
+
+        return MarketData(symbol=symbol, data=data_points)
 
 
 def create_comparison_report(
