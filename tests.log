@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
-Branch: claude/add-structurelint-linting-019cvu6hrcBytoLgjJ9YF5CS
-Commit: 33e0b0434e049a87b0e92d51a352f04818e46391
-Timestamp: 2025-11-18 11:35:18 UTC
+Branch: dependabot/github_actions/codecov/codecov-action-5
+Commit: e7b81c00e9b30d3cfcb66c15760d70ce2646a1ac
+Timestamp: 2025-11-21 14:48:54 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -59,7 +59,7 @@ test_full_investment_cycle (tests.test_analysis_suite.TestIntegration)
 Test complete investment simulation cycle. ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.022s
+Ran 26 tests in 0.017s
 
 OK
 test_full_pairwise_analysis_runs_without_crash (tests.test_financial_validation.TestRealDataIntegration)
@@ -98,7 +98,7 @@ test_percentile_calculations_are_monotonic (tests.test_financial_validation.Test
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.092s
+Ran 17 tests in 2.117s
 
 OK
 ╔==============================================================================╗
