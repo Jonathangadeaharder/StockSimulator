@@ -1,8 +1,8 @@
 ================================================
 Test Execution Log
 Branch: dependabot/github_actions/actions/cache-4
-Commit: 839a7dc8523976fc1062c7547816bcbc5d0aebe4
-Timestamp: 2025-11-21 14:50:44 UTC
+Commit: f556669a24218fa4c5f2ef07674a85c42eed335f
+Timestamp: 2025-11-21 14:51:41 UTC
 ================================================
 
 test_irr_handles_loss_scenario (tests.test_analysis_suite.TestIRRCalculation)
@@ -98,7 +98,7 @@ test_percentile_calculations_are_monotonic (tests.test_financial_validation.Test
 Percentiles should be in ascending order (10th < 25th < 50th < 75th < 90th). ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 2.102s
+Ran 17 tests in 2.113s
 
 OK
 ╔==============================================================================╗
